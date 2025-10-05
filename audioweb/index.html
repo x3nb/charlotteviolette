@@ -1,1 +1,317 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Spider Web with Navigation & Audio</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #2b006b, #000);
+    overflow-x: hidden;
+    color: #ccc;
+  }
+
+  /* Top menu for quick links */
+  #topMenu {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+  #topMenu a {
+    color: #ccc;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  #topMenu a:hover {
+    color: #fff;
+  }
+
+  /* Sidebar for room navigation */
+  #sidebar {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    width: 150px;
+    height: calc(100% - 50px);
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow-y: auto;
+    z-index: 10;
+  }
+  .roomLink {
+    margin: 10px 0;
+    padding: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+  }
+  .roomLink:hover {
+    background: rgba(255,255,255,0.3);
+    color: #fff;
+  }
+
+  /* Main content area for rooms */
+  #content {
+    margin-left: 160px;
+    margin-top: 50px;
+    padding: 20px;
+    max-width: 800px;
+  }
+
+  /* Spider container: initially at top, then moves down */
+  #spiderContainer {
+    position: fixed;
+    top: 80px; /* start top, moves down later */
+    left: 50px;
+    z-index: 20;
+    transition: top 1s ease;
+  }
+
+  #spider {
+    font-size: 50px;
+    cursor: pointer;
+    display: inline-block;
+    /* Walking animation */
+    animation: walk 2s steps(4) infinite;
+    transform-origin: bottom left;
+    /* Glow when activated */
+    transition: box-shadow 0.3s, filter 0.3s;
+  }
+
+  /* Glowing effect class */
+  #spider.activated {
+    box-shadow: 0 0 20px 4px #ffff66, 0 0 30px 6px #ffff66 inset;
+    filter: brightness(1.2);
+  }
+
+  @keyframes walk {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-3px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* Wobble when paused */
+  @keyframes wobble {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+    100% { transform: rotate(0deg); }
+  }
+  #spider.wobble {
+    animation: wobble 0.5s infinite;
+  }
+
+  /* Drop to center of view */
+  #drop {
+    transition: top 1s ease;
+  }
+
+  /* Scrolling title at top */
+  #scrollTitle {
+    position: fixed;
+    top: 40px;
+    width: 100%;
+    height: 30px;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    font-size: 1.2em;
+    display: none; /* hidden initially */
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  #scrollText {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 10s linear infinite;
+  }
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top quick links -->
+<div id="topMenu">
+  <a data-room="top" href="#">Home</a>
+  <a data-room="instructions" href="#">Instructions</a>
+  <a data-room="game" href="#">Game</a>
+  <a data-room="social" href="#">Social</a>
+</div>
+
+<!-- Scrolling title -->
+<div id="scrollTitle"><div id="scrollText"></div></div>
+
+<!-- Sidebar for navigation -->
+<div id="sidebar">
+  <div class="roomLink" data-room="instructions">Instructions</div>
+  <div class="roomLink" data-room="game">Game</div>
+  <div class="roomLink" data-room="social">Social</div>
+</div>
+
+<!-- Spider container -->
+<div id="spiderContainer">
+  <div id="spider" title="Click me">🕷️</div>
+</div>
+
+<!-- Content sections -->
+<div id="content">
+  <div id="top" class="room">
+    <h2>Welcome</h2>
+    <p>Use the menu to navigate. Click the spider to meet and listen to music!</p>
+  </div>
+  <div id="instructions" class="room">
+    <h2>Instructions</h2>
+    <p>This is the instructions room. Click the spider to meet here and listen to sample music.</p>
+  </div>
+  <div id="game" class="room">
+    <h2>Game</h2>
+    <p>This is the game room. Click the spider to join and listen.</p>
+  </div>
+  <div id="social" class="room">
+    <h2>Social</h2>
+    <p>This is the social room. Click the spider to connect and listen.</p>
+  </div>
+</div>
+
+<!-- Audio element -->
+<audio id="audio" src="" preload="auto"></audio>
+
+<script>
+const spider = document.getElementById('spider');
+const spiderContainer = document.getElementById('spiderContainer');
+const scrollTitleDiv = document.getElementById('scrollTitle');
+const scrollText = document.getElementById('scrollText');
+const audio = document.getElementById('audio');
+
+const rooms = {
+  top: document.getElementById('top'),
+  instructions: document.getElementById('instructions'),
+  game: document.getElementById('game'),
+  social: document.getElementById('social')
+};
+
+let isDropped = false;
+
+// Example playlist with titles
+const playlist = [
+  {url: 'salutations.mp3', title: 'salutations'},
+  {url: 'instructions.mp3', title: 'instructions'}
+];
+let currentTrack = 0;
+
+// Animate the spider: walk, wobble, glow, drop
+function animateSpider() {
+  // Reset classes and styles
+  spider.className = '';
+  spider.style.transition = '';
+  spider.style.transform = '';
+  // Start walking
+  spider.style.animation = 'walk 2s steps(4) infinite';
+
+  setTimeout(() => {
+    // Pause walk
+    spider.style.animation = '';
+    // Add glow effect
+    spider.classList.add('activated');
+    // Wobble for 2 seconds
+    spider.classList.add('wobble');
+    setTimeout(() => {
+      spider.classList.remove('wobble');
+      // Drop to center
+      spiderContainer.style.top = '50%';
+      // Play sample and show scrolling title
+      setTimeout(() => {
+        playSample();
+        showScrollingTitle(playlist[currentTrack].title);
+      }, 1000);
+    }, 2000);
+  }, 2000);
+}
+
+// Show scrolling title
+function showScrollingTitle(title) {
+  scrollText.innerText = title + '   ';
+  scrollTitle.style.display = 'flex';
+}
+
+// Updated playSample() function
+function playSample() {
+  // Always set the src to the current track URL
+  audio.src = playlist[currentTrack].url;
+  // Load the audio to ensure it's ready
+  audio.load();
+  // Set volume to maximum
+  audio.volume = 1;
+  // Play the audio and catch any errors
+  audio.play().catch(error => {
+    console.error("Error playing audio:", error);
+  });
+}
+
+// When clicking the spider
+spider.addEventListener('click', () => {
+  if (!isDropped) {
+    animateSpider();
+    isDropped = true;
+  } else {
+    // toggle play/pause
+    if (audio.paused) {
+      playSample();
+    } else {
+      audio.pause();
+    }
+  }
+  // Activate glow
+  spider.classList.add('activated');
+});
+
+// Navigation from top and sidebar
+document.querySelectorAll('#topMenu a, .roomLink').forEach(link => {
+  link.onclick = (e) => {
+    e.preventDefault();
+    const roomId = link.dataset.room || link.getAttribute('data-room');
+    scrollToRoom(roomId);
+  };
+});
+
+function scrollToRoom(roomId) {
+  const el = document.getElementById(roomId);
+  if (el) {
+    el.scrollIntoView({behavior: 'smooth'});
+  }
+}
+
+// When song ends, auto-play next
+audio.addEventListener('ended', () => {
+  currentTrack = (currentTrack + 1) % playlist.length;
+  playSample();
+  showScrollingTitle(playlist[currentTrack].title);
+});
+
+// On page load
+window.onload = () => {
+  animateSpider();
+};
+</script>
+</body>
+</html>
