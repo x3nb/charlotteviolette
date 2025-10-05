@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Spider Web with Navigation & Audio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    font-family: 'Lora', serif;
+    background: linear-gradient(135deg, #4b0082, #708090, #2f4f4f); /* Indigo to ombre grey gradient */
+    overflow-x: hidden;
+    color: #ddd;
+    position: relative;
+  }
+
+  /* Bubbles background animation */
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(138, 43, 226, 0.1); /* Purple-tinted bubbles */
+    pointer-events: none;
+    animation: float 6s ease-in-out infinite;
+  }
+  .bubble:nth-child(1) { left: 10%; width: 80px; height: 80px; animation-delay: 0s; }
+  .bubble:nth-child(2) { left: 20%; width: 50px; height: 50px; animation-delay: 1s; }
+  .bubble:nth-child(3) { left: 30%; width: 60px; height: 60px; animation-delay: 2s; }
+  .bubble:nth-child(4) { left: 80%; width: 40px; height: 40px; animation-delay: 0.5s; }
+  .bubble:nth-child(5) { left: 90%; width: 70px; height: 70px; animation-delay: 3s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Purple accents for content areas */
+  .room {
+    background: rgba(128, 0, 128, 0.1); /* Purple-tinted sections */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #9370db; /* Purple border */
+  }
+
+  /* Top menu for quick links */
+  #topMenu {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    font-family: 'Cinzel', serif;
+  }
+  #topMenu a {
+    color: #ddd;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1em;
+  }
+  #topMenu a:hover {
+    color: #9370db; /* Purple hover */
+  }
+
+  /* Sidebar for room navigation */
+  #sidebar {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    width: 150px;
+    height: calc(100% - 50px);
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow-y: auto;
+    z-index: 10;
+    font-family: 'Cinzel', serif;
+  }
+  .roomLink {
+    margin: 10px 0;
+    padding: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9em;
+  }
+  .roomLink:hover {
+    background: rgba(147, 112, 219, 0.3); /* Purple hover */
+    color: #fff;
+  }
+
+  /* Main content area for rooms */
+  #content {
+    margin-left: 160px;
+    margin-top: 50px;
+    padding: 20px;
+    max-width: 800px;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: #9370db; /* Purple headings */
+    text-align: center;
+  }
+
+  /* Spider container: initially at top, then moves down */
+  #spiderContainer {
+    position: fixed;
+    top: 80px; /* start top, moves down later */
+    left: 50px;
+    z-index: 20;
+    transition: top 1s ease, left 1s ease;
+  }
+
+  /* Simple CSS web around spider */
+  #web {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 90px;
+    height: 90px;
+    border: 2px solid rgba(147, 112, 219, 0.5); /* Purple web lines */
+    border-radius: 50%;
+    opacity: 0.6;
+    z-index: -1;
+  }
+  #web::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    border: 1px solid rgba(147, 112, 219, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #web::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    width: 60px;
+    height: 2px;
+    background: rgba(147, 112, 219, 0.5);
+    transform: rotate(45deg);
+  }
+
+  #spider {
+    font-size: 50px;
+    cursor: pointer;
+    display: inline-block;
+    /* Walking animation */
+    animation: walk 2s steps(4) infinite;
+    transform-origin: bottom left;
+    /* Glow when activated */
+    transition: box-shadow 0.3s, filter 0.3s;
+    position: relative;
+  }
+
+  /* Glowing effect class */
+  #spider.activated {
+    box-shadow: 0 0 20px 4px #9370db, 0 0 30px 6px #9370db inset; /* Purple glow */
+    filter: brightness(1.2);
+  }
+
+  /* Music movement: subtle bounce on song play */
+  #spider.playing {
+    animation: bounce 0.5s ease-in-out;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes walk {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-3px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* Wobble when paused */
+  @keyframes wobble {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+    100% { transform: rotate(0deg); }
+  }
+  #spider.wobble {
+    animation: wobble 0.5s infinite;
+  }
+
+  /* Drop to center of view */
+  #drop {
+    transition: top 1s ease;
+  }
+
+  /* Scrolling title at top (song name) */
+  #scrollTitle {
+    position: fixed;
+    top: 40px;
+    width: 100%;
+    height: 30px;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    font-size: 1.2em;
+    font-family: 'Cinzel', serif;
+    display: none; /* hidden initially */
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 5;
+  }
+  #scrollText {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 10s linear infinite;
+  }
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Bottom scrolling lyrics */
+  #scrollLyrics {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background: rgba(0,0,0,0.5);
+    color: #ccc;
+    font-size: 0.9em;
+    font-style: italic;
+    font-family: 'Lora', serif;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 5;
+  }
+  #lyricsText {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 15s linear infinite;
+    white-space: nowrap;
+  }
+
+  /* Greeting speech bubble */
+  #greeting {
+    position: absolute;
+    top: -60px;
+    left: 50px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 25;
+    max-width: 150px;
+  }
+  #greeting.show {
+    opacity: 1;
+  }
+  #greeting::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 20px;
+    border: 5px solid transparent;
+    border-top-color: rgba(0,0,0,0.8);
+  }
+</style>
+</head>
+<body>
+  <!-- Bubbles -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
+<!-- Top quick links -->
+<div id="topMenu">
+  <a data-room="top" href="#">Home</a>
+  <a data-room="instructions" href="#">Instructions</a>
+  <a data-room="game" href="#">Game</a>
+  <a data-room="social" href="#">Social</a>
+</div>
+
+<!-- Scrolling title (song name) -->
+<div id="scrollTitle"><div id="scrollText"></div></div>
+
+<!-- Bottom scrolling lyrics -->
+<div id="scrollLyrics"><div id="lyricsText">Sample lyrics: In the shadows we dance, under the indigo sky... </div></div>
+
+<!-- Sidebar for navigation -->
+<div id="sidebar">
+  <div class="roomLink" data-room="instructions">Instructions</div>
+  <div class="roomLink" data-room="game">Game</div>
+  <div class="roomLink" data-room="social">Social</div>
+</div>
+
+<!-- Spider container -->
+<div id="spiderContainer">
+  <div id="web"></div>
+  <div id="greeting">Greetings, wanderer! Click to hear the tunes.</div>
+  <div id="spider" title="Click me">🕷️</div>
+</div>
+
+<!-- Content sections (rooms) -->
+<div id="content">
+  <div id="top" class="room">
+    <h2>Welcome</h2>
+    <p>Use the menu to navigate rooms. Click the spider to meet your guide and listen to music!</p>
+  </div>
+  <div id="instructions" class="room">
+    <h2>Instructions</h2>
+    <p>This is the instructions room. Anchored here—explore like entering a new chamber. Click the spider to meet here and listen to sample music.</p>
+  </div>
+  <div id="game" class="room">
+    <h2>Game</h2>
+    <p>This is the game room. Anchored at the heart—feel the adventure. Click the spider to join and listen.</p>
+  </div>
+  <div id="social" class="room">
+    <h2>Social</h2>
+    <p>This is the social room. Anchored below—connect in the web. Click the spider to connect and listen.</p>
+  </div>
+</div>
+
+<!-- Audio element -->
+<audio id="audio" src="" preload="auto"></audio>
+
+<script>
+const spider = document.getElementById('spider');
+const spiderContainer = document.getElementById('spiderContainer');
+const scrollTitleDiv = document.getElementById('scrollTitle');
+const scrollText = document.getElementById('scrollText');
+const scrollLyricsDiv = document.getElementById('scrollLyrics');
+const lyricsText = document.getElementById('lyricsText');
+const greeting = document.getElementById('greeting');
+const audio = document.getElementById('audio');
+
+const rooms = {
+  top: document.getElementById('top'),
+  instructions: document.getElementById('instructions'),
+  game: document.getElementById('game'),
+  social: document.getElementById('social')
+};
+
+let isDropped = false;
+let hasGreeted = false;
+
+// Example playlist with titles and lyrics (placeholders; replace with real lyrics)
+const playlist = [
+  {url: 'https://x3nb.github.io/charlotteviolette/audioweb/audiblechat/charlottesintro.mp3', title: 'SHRINKINGVIOLET', lyrics: 'In the shadows we dance, under the indigo sky, whispers of the web entwine...'},
+  {url: 'audioweb/audiblechat/charlottesintro.mp3', title: 'shrinkingviolet', lyrics: 'Echoes in the violet void, spider spins the silken thread, guiding lost souls through the night...'}
+];
+let currentTrack = 0;
+
+// Animate the spider: walk, wobble, glow, drop
+function animateSpider() {
+  // Reset classes and styles
+  spider.className = '';
+  spider.style.transition = '';
+  spider.style.transform = '';
+  // Start walking
+  spider.style.animation = 'walk 2s steps(4) infinite';
+
+  setTimeout(() => {
+    // Pause walk
+    spider.style.animation = '';
+    // Add glow effect
+    spider.classList.add('activated');
+    // Wobble for 2 seconds
+    spider.classList.add('wobble');
+    setTimeout(() => {
+      spider.classList.remove('wobble');
+      // Drop to center and move slightly right for guidance feel
+      spiderContainer.style.top = '50%';
+      spiderContainer.style.left = '60px';
+      // Play sample and show scrolling title/lyrics
+      setTimeout(() => {
+        playSample();
+        showScrollingTitle(playlist[currentTrack].title);
+        showScrollingLyrics(playlist[currentTrack].lyrics);
+      }, 1000);
+    }, 2000);
+  }, 2000);
+}
+
+// Show scrolling title
+function showScrollingTitle(title) {
+  scrollText.innerText = title + '   ';
+  scrollTitleDiv.style.display = 'flex';
+}
+
+// Show scrolling lyrics
+function showScrollingLyrics(lyrics) {
+  lyricsText.innerText = lyrics + '   ';
+  scrollLyricsDiv.style.display = 'flex';
+}
+
+// Updated playSample() function
+function playSample() {
+  // Always set the src to the current track URL
+  audio.src = playlist[currentTrack].url;
+  // Load the audio to ensure it's ready
+  audio.load();
+  // Set volume to maximum
+  audio.volume = 1;
+  // Play the audio and catch any errors
+  audio.play().catch(error => {
+    console.error("Error playing audio:", error);
+  });
+  // Spider moves/bounces on play
+  spider.classList.add('playing');
+  setTimeout(() => spider.classList.remove('playing'), 500);
+}
+
+// When clicking the spider
+spider.addEventListener('click', () => {
+  if (!isDropped) {
+    animateSpider();
+    isDropped = true;
+  } else {
+    // toggle play/pause
+    if (audio.paused) {
+      playSample();
+      showScrollingTitle(playlist[currentTrack].title);
+      showScrollingLyrics(playlist[currentTrack].lyrics);
+    } else {
+      audio.pause();
+      scrollTitleDiv.style.display = 'none';
+      scrollLyricsDiv.style.display = 'none';
+    }
+  }
+  // Activate glow
+  spider.classList.add('activated');
+  // Greet if not yet
+  if (!hasGreeted) {
+    greeting.classList.add('show');
+    setTimeout(() => greeting.classList.remove('show'), 3000);
+    hasGreeted = true;
+  }
+});
+
+// Navigation from top and sidebar (anchor to room top/bottom for room feel)
+document.querySelectorAll('#topMenu a, .roomLink').forEach(link => {
+  link.onclick = (e) => {
+    e.preventDefault();
+    const roomId = link.dataset.room || link.getAttribute('data-room');
+    const roomEl = document.getElementById(roomId);
+    if (roomId === 'top') {
+      // Home anchors to top of page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (roomId === 'social') {
+      // Social anchors to bottom of room
+      roomEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    } else {
+      // Others anchor to top of room
+      roomEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    // Guide spider towards current room (simple left movement)
+    spiderContainer.style.left = (roomId === 'social' ? '200px' : '60px');
+  };
+});
+
+// When song ends, auto-play next
+audio.addEventListener('ended', () => {
+  currentTrack = (currentTrack + 1) % playlist.length;
+  playSample();
+  showScrollingTitle(playlist[currentTrack].title);
+  showScrollingLyrics(playlist[currentTrack].lyrics);
+});
+
+// On page load
+window.onload = () => {
+  animateSpider();
+};
+</script>
+</body>
+</html>
