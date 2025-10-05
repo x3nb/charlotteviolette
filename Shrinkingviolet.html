@@ -9,7 +9,7 @@
   body {
     margin: 0;
     font-family: 'Lora', serif;
-    background: linear-gradient(135deg, #4b0082, #708090, #2f4f4f); /* Indigo to ombre grey gradient */
+    background: linear-gradient(135deg, #2c003e, #4d5566, #1a1f1f); /* Darker indigo to ombre grey gradient */
     overflow-x: hidden;
     color: #ddd;
     position: relative;
@@ -33,8 +33,1078 @@
     50% { opacity: 0.5; }
   }
 
-  /* Purple accents for content areas */
+  /* Purple accents for content areas with animation */
   .room {
+    background: rgba(128, 0, 128, 0.1); /* Purple-tinted sections */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #9370db; /* Purple border */
+    opacity: 0.7; /* Slightly faded initially */
+    transform: translateY(20px); /* Start shifted down for rising effect */
+    transition: opacity 0.6s ease, transform 0.6s ease; /* Smooth rising/fading */
+  }
+  .room.active {
+    opacity: 1;
+    transform: translateY(0); /* Rise into place */
+  }
+  .room.fall { /* For social, optional falling from above */
+    transform: translateY(-20px);
+  }
+  .room.active.fall {
+    transform: translateY(0);
+  }
+
+  /* Sidebar for room navigation (now primary) */
+  #sidebar {
+    position: fixed;
+    top: 0; /* Full height from top now */
+    left: 0;
+    width: 150px;
+    height: 100%;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 10px; /* Adjusted padding for full sidebar */
+    overflow-y: auto;
+    z-index: 10;
+    font-family: 'Cinzel', serif;
+  }
+  .roomLink {
+    margin: 10px 0;
+    padding: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9em;
+    transition: background 0.3s, color 0.3s;
+  }
+  .roomLink:hover {
+    background: rgba(147, 112, 219, 0.3); /* Purple hover */
+    color: #fff;
+  }
+  .roomLink.active {
+    background: rgba(147, 112, 219, 0.5); /* Highlight active link */
+    color: #fff;
+  }
+
+  /* Main content area for rooms */
+  #content {
+    margin-left: 160px;
+    margin-top: 0; /* No top margin since no top menu */
+    padding: 20px;
+    max-width: 800px;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: #9370db; /* Purple headings */
+    text-align: center;
+    margin-bottom: 15px; /* Ensure titles are prominent */
+  }
+
+  /* Spider container: initially at top, then moves down */
+  #spiderContainer {
+    position: fixed;
+    top: 80px; /* start top, moves down later */
+    left: 50px;
+    z-index: 20;
+    transition: top 1s ease, left 1s ease; /* Smooth following */
+  }
+
+  /* Simple CSS web around spider */
+  #web {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 90px;
+    height: 90px;
+    border: 2px solid rgba(147, 112, 219, 0.5); /* Purple web lines */
+    border-radius: 50%;
+    opacity: 0.6;
+    z-index: -1;
+  }
+  #web::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    border: 1px solid rgba(147, 112, 219, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #web::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    width: 60px;
+    height: 2px;
+    background: rgba(147, 112, 219, 0.5);
+    transform: rotate(45deg);
+  }
+
+  #spider {
+    font-size: 50px;
+    cursor: pointer;
+    display: inline-block;
+    /* Walking animation */
+    animation: walk 2s steps(4) infinite;
+    transform-origin: bottom left;
+    /* Glow when activated */
+    transition: box-shadow 0.3s, filter 0.3s;
+    position: relative;
+  }
+
+  /* Glowing effect class */
+  #spider.activated {
+    box-shadow: 0 0 20px 4px #9370db, 0 0 30px 6px #9370db inset; /* Purple glow */
+    filter: brightness(1.2);
+  }
+
+  /* Extra glow for bonus unlock */
+  #spider.bonus {
+    box-shadow: 0 0 30px 8px #9370db, 0 0 40px 10px #9370db inset;
+    filter: brightness(1.5);
+    animation: pulse 1s ease-in-out infinite alternate;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+  }
+
+  /* Music movement: subtle bounce on song play */
+  #spider.playing {
+    animation: bounce 0.5s ease-in-out;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes walk {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-3px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* Wobble when paused */
+  @keyframes wobble {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+    100% { transform: rotate(0deg); }
+  }
+  #spider.wobble {
+    animation: wobble 0.5s infinite;
+  }
+
+  /* Scrolling title at top (song name) - now hidden when synced lyrics are active */
+  #scrollTitle {
+    position: fixed;
+    top: 0; /* Now at very top since no menu */
+    width: 100%;
+    height: 30px;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    font-size: 1.2em;
+    font-family: 'Cinzel', serif;
+    display: none; /* hidden initially */
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 5;
+  }
+  #scrollText {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 10s linear infinite;
+  }
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Bottom scrolling lyrics - now hidden when synced lyrics are active */
+  #scrollLyrics {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background: rgba(0,0,0,0.5);
+    color: #ccc;
+    font-size: 0.9em;
+    font-style: italic;
+    font-family: 'Lora', serif;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 5;
+  }
+  #lyricsText {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 15s linear infinite;
+    white-space: nowrap;
+  }
+
+  /* Playlist Drawer UI */
+  #playlistDrawer {
+    position: fixed;
+    top: 0;
+    right: -300px; /* Hidden off-screen */
+    width: 300px;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    color: #ddd;
+    padding: 20px;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.5);
+    transition: right 0.5s ease;
+    z-index: 15;
+    font-family: 'Lora', serif;
+    overflow-y: auto;
+  }
+  #playlistDrawer.open {
+    right: 0; /* Slide in */
+  }
+  #playlistDrawer h3 {
+    font-family: 'Cinzel', serif;
+    color: #9370db;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .track {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(147, 112, 219, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .track:hover, .track.active {
+    background: rgba(147, 112, 219, 0.3);
+  }
+  .track img {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    margin-right: 10px;
+    object-fit: cover;
+  }
+  .track-info h4 {
+    font-family: 'Cinzel', serif;
+    color: #9370db;
+    margin: 0 0 5px 0;
+    font-size: 1em;
+  }
+  .track-info p {
+    margin: 0;
+    font-size: 0.8em;
+    opacity: 0.7;
+  }
+  /* Controls */
+  #playlistControls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+  }
+  #prevBtn, #nextBtn {
+    background: rgba(147, 112, 219, 0.5);
+    border: none;
+    color: #fff;
+    padding: 10px;
+    margin: 0 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+  }
+  #prevBtn:hover, #nextBtn:hover {
+    background: rgba(147, 112, 219, 0.7);
+  }
+  #volumeSlider {
+    width: 100%;
+    margin: 10px 0;
+  }
+  #volumeSlider::-webkit-slider-thumb {
+    background: #9370db;
+  }
+  #closeDrawer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #ddd;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+
+  /* Synced Lyrics Overlay */
+  #lyricsOverlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.9);
+    color: #ccc;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 600px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 25;
+    display: none;
+    font-family: 'Lora', serif;
+    font-size: 1.2em;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(147, 112, 219, 0.5);
+    border: 1px solid rgba(147, 112, 219, 0.3);
+  }
+  #lyricsOverlay.show {
+    display: block;
+  }
+  .lyric-word {
+    display: inline-block;
+    margin: 0 5px;
+    transition: color 0.3s ease;
+    cursor: default;
+  }
+  .lyric-word.active {
+    color: #9370db; /* Purple highlight */
+    text-shadow: 0 0 10px #9370db;
+    transform: scale(1.1); /* Subtle zoom */
+  }
+  #lyricsOverlay h3 {
+    font-family: 'Cinzel', serif;
+    color: #9370db;
+    margin-bottom: 20px;
+  }
+  #closeLyrics {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+
+  /* Greeting speech bubble */
+  #greeting {
+    position: absolute;
+    top: -60px;
+    left: 50px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 25;
+    max-width: 150px;
+  }
+  #greeting.show {
+    opacity: 1;
+  }
+  #greeting::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 20px;
+    border: 5px solid transparent;
+    border-top-color: rgba(0,0,0,0.8);
+  }
+
+  /* Overlay for drawer and lyrics (backdrop) */
+  #backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 12;
+  }
+  #backdrop.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Web Trail for Pointing Animation */
+  #webTrail {
+    position: fixed;
+    width: 2px;
+    height: 0; /* Starts at 0 height */
+    background: linear-gradient(to bottom, transparent, #9370db); /* Purple trail */
+    z-index: 18;
+    opacity: 0;
+    transition: height 0.5s ease, opacity 0.5s ease, left 0.5s ease, top 0.5s ease;
+    pointer-events: none;
+    box-shadow: 0 0 5px rgba(147, 112, 219, 0.5); /* Glow */
+  }
+  #webTrail.show {
+    opacity: 0.8;
+    height: 100px; /* Adjust based on distance */
+  }
+  #webTrail.pointing {
+    height: 150px; /* Longer for pointing */
+    transform: rotate(-45deg); /* Angle towards sidebar */
+  }
+
+  /* Game Room Mini-Feature: Riddle Styles */
+  #gameRiddle {
+    text-align: center;
+    margin: 20px 0;
+    font-family: 'Cinzel', serif;
+    color: #9370db;
+  }
+  #riddleText {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    font-style: italic;
+  }
+  #riddleInput {
+    padding: 10px;
+    background: rgba(147, 112, 219, 0.2);
+    border: 1px solid #9370db;
+    color: #ddd;
+    border-radius: 4px;
+    width: 200px;
+    font-family: 'Lora', serif;
+  }
+  #riddleInput:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
+  }
+  #riddleBtn {
+    padding: 10px 20px;
+    background: rgba(147, 112, 219, 0.5);
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-family: 'Cinzel', serif;
+    transition: background 0.3s;
+  }
+  #riddleBtn:hover {
+    background: rgba(147, 112, 219, 0.7);
+  }
+  #riddleBtn:disabled {
+    background: rgba(
+  }
+  #riddleSuccess {
+    color: #9370db;
+    font-weight: bold;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  #riddleSuccess.show {
+    opacity: 1;
+  }
+  #riddleError {
+    color: #ff6b6b;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  #riddleError.show {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+  <!-- Bubbles -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
+  <!-- Scrolling title (song name) -->
+  <div id="scrollTitle"><div id="scrollText"></div></div>
+
+  <!-- Bottom scrolling lyrics -->
+  <div id="scrollLyrics"><div id="lyricsText">Sample lyrics: I'm Charlotte, salutations my new friend... </div></div>
+
+  <!-- Backdrop for overlays -->
+  <div id="backdrop"></div>
+
+  <!-- Web Trail Element -->
+  <div id="webTrail"></div>
+
+  <!-- Playlist Drawer -->
+  <div id="playlistDrawer">
+    <button id="closeDrawer">&times;</button>
+    <h3>🕷️ Web Tunes</h3>
+    <div id="playlistTracks"></div>
+    <div id="playlistControls">
+      <button id="prevBtn">&lt; Prev</button>
+      <button id="nextBtn">Next &gt;</button>
+      <br>
+      <label for="volumeSlider">Volume:</label>
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1">
+    </div>
+  </div>
+
+  <!-- Synced Lyrics Overlay -->
+  <div id="lyricsOverlay">
+    <button id="closeLyrics">&times;</button>
+    <h3 id="lyricsTitle"></h3>
+    <div id="syncedLyrics"></div>
+  </div>
+
+  <!-- Sidebar for navigation (now includes Home) -->
+  <div id="sidebar">
+    <div class="roomLink active" data-room="top">Home</div>
+    <div class="roomLink" data-room="instructions">Instructions</div>
+    <div class="roomLink" data-room="game">Game</div>
+    <div class="roomLink" data-room="social">Social</div>
+  </div>
+
+  <!-- Spider container -->
+  <div id="spiderContainer">
+    <div id="web"></div>
+    <div id="greeting">Greetings, wanderer! Click to hear the tunes.</div>
+    <div id="spider" title="Click me">🕷️</div>
+  </div>
+
+  <!-- Content sections (rooms) -->
+  <div id="content">
+    <div id="top" class="room active">
+      <h2>Welcome</h2>
+      <p>Use the sidebar to navigate rooms. Click the spider to meet your guide and listen to music!</p>
+    </div>
+    <div id="instructions" class="room">
+      <h2>Instructions</h2>
+      <p>This is the instructions room. Anchored here—explore like entering a new chamber. Click the spider to meet here and listen to sample music.</p>
+    </div>
+    <div id="game" class="room">
+      <h2>Game</h2>
+      <p>This is the game room. Anchored at the heart—feel the adventure. Click the spider to join and listen.</p>
+      <div id="gameRiddle">
+        <div id="riddleText">Riddle: I weave the night with silken thread, eight legs I tread where shadows spread. What am I?</div>
+        <input type="text" id="riddleInput" placeholder="Your answer..." autocomplete="off">
+        <button id="riddleBtn">Weave the Web</button>
+        <div id="riddleSuccess">🕷️ The web is woven! Bonus track unlocked.</div>
+        <div id="riddleError">Not quite... Try again, wanderer.</div>
+      </div>
+    </div>
+    <div id="social" class="room fall">
+      <h2>Social</h2>
+      <p>This is the social room. Anchored below—connect in the web. Click the spider to connect and listen.</p>
+    </div>
+  </div>
+
+  <!-- Audio element -->
+  <audio id="audio" src="" preload="auto"></audio>
+
+  <script>
+  const spider = document.getElementById('spider');
+  const spiderContainer = document.getElementById('spiderContainer');
+  const scrollTitleDiv = document.getElementById('scrollTitle');
+  const scrollText = document.getElementById('scrollText');
+  const scrollLyricsDiv = document.getElementById('scrollLyrics');
+  const lyricsText = document.getElementById('lyricsText');
+  const greeting = document.getElementById('greeting');
+  const audio = document.getElementById('audio');
+  const playlistDrawer = document.getElementById('playlistDrawer');
+  const backdrop = document.getElementById('backdrop');
+  const lyricsOverlay = document.getElementById('lyricsOverlay');
+  const syncedLyrics = document.getElementById('syncedLyrics');
+  const lyricsTitle = document.getElementById('lyricsTitle');
+  const webTrail = document.getElementById('webTrail');
+  const riddleInput = document.getElementById('riddleInput');
+  const riddleBtn = document.getElementById('riddleBtn');
+  const riddleSuccess = document.getElementById('riddleSuccess');
+  const riddleError = document.getElementById('riddleError');
+
+  const rooms = {
+    top: document.getElementById('top'),
+    instructions: document.getElementById('instructions'),
+    game: document.getElementById('game'),
+    social: document.getElementById('social')
+  };
+
+  let isDropped = false;
+  let hasGreeted = false;
+  let isDrawerOpen = false;
+  let isLyricsOpen = false;
+  let currentHighlightInterval = null;
+  let currentRoomId = 'top';
+  let bonusUnlocked = false; // Track if bonus is unlocked
+
+  // Expanded playlist with bonus track (initially hidden)
+  const bonusTrack = {
+    url: 'https://x3nb.github.io/charlotteviolette/audioweb/audiblechat/charlottesintro.mp3', // Demo; replace with real bonus audio
+    title: 'Web of Secrets (Bonus)',
+    artwork: 'https://via.placeholder.com/50x50/8B008B/FFFFFF?text=WS', // Darker purple
+    lyrics: [
+      { text: 'Secrets', time: 0 },
+      { text: 'in', time: 1 },
+      { text: 'the', time: 2 },
+      { text: 'web', time: 3 },
+      { text: 'unfold,', time: 5 },
+      { text: 'spider', time: 7 },
+      { text: 'whispers', time: 8 },
+      { text: 'the', time: 9 },
+      { text: 'truth', time: 10 },
+      { text: 'of', time: 12 },
+      { text: 'the', time: 13 },
+      { text: 'night...', time: 14 }
+    ]
+  };
+
+  let playlist = [
+    {
+      url: 'https://x3nb.github.io/charlotteviolette/audioweb/audiblechat/charlottesintro.mp3',
+      title: 'salutations violets',
+      artwork: 'https://via.placeholder.com/50x50/4B0082/FFFFFF?text=SV',
+      lyrics: [
+        { text: 'Salutations', time: 0 },
+        { text: 'I am', time: 1 },
+        { text: 'Charlotte', time: 2 },
+        { text: 'your', time: 4 },
+        { text: 'guide,', time: 5 },
+        { text: 'in', time: 7 },
+        { text: 'the', time: 8 },
+        { text: 'realm', time: 9 },
+        { text: 'of,', time: 11 },
+        { text: 'shrinking', time: 13 },
+        { text: 'vi', time: 15 },
+        { text: 'ol', time: 16 },
+        { text: 'lets', time: 17 },
+        { text: '.....', time: 18 }
+      ]
+    },
+    {
+      url: 'https://x3nb.github.io/charlotteviolette/audioweb/audiblechat/charlottestea.mp3',
+      title: 'instructions',
+      artwork: 'https://via.placeholder.com/50x50/2C003E/FFFFFF?text=MW',
+      lyrics: [
+        { text: 'Charlottes', time: 0 },
+        { text: 'my', time: 1 },
+        { text: 'name', time: 1 },
+        { text: 'spinnings', time: 2 },
+        { text: 'my,', time: 1 },
+        { text: 'game', time: 3 },
+        { text: 'what', time: 2 },
+        { text: 'webs', time: 2 },
+        { text: 'would', time: 2 },
+        { text: 'you,', time: 2 },
+        { text: 'like', time: 1 },
+        { text: 'to', time: 2 },
+        { text: 'spin', time: 1 },
+        { text: 'with', time: 17 },
+        { text: 'me', time: 18 },
+        { text: '?...', time: 19 }
+      ]
+    },
+    {
+      url: 'https://x3nb.github.io/charlotteviolette/audioweb/audiblechat/QuestGame.mp3',
+      title: 'game',
+      artwork: 'https://via.placeholder.com/50x50/9370DB/FFFFFF?text=PS',
+      lyrics: [
+        { text: 'This', time: 0 },
+        { text: 'is', time: 2 },
+        { text: 'the', time: 3 },
+        { text: 'game', time: 5 },
+        { text: 'room', time: 7 },
+        { text: 'anchored', time: 8 },
+        { text: 'at', time: 10 },
+        { text: 'the', time: 12 },
+        { text: 'heart', time: 13 },
+        { text: 'for', time: 14 },
+        { text: 'the', time: 15 },
+        { text: 'adventure', time: 16 },
+        { text: 'cick...', time: 18 }
+      ]
+    }
+  ];
+  let currentTrack = 0;
+
+  // Game Room Riddle Functionality
+  const correctAnswer = 'spider'; // Case-insensitive
+  riddleBtn.onclick = () => {
+    const answer = riddleInput.value.trim().toLowerCase();
+    if (answer === correctAnswer) {
+      // Success: Unlock bonus
+      if (!bonusUnlocked) {
+        playlist.push(bonusTrack); // Add to playlist
+        bonusUnlocked = true;
+        riddleSuccess.classList.add('show');
+        riddleError.classList.remove('show');
+        riddleInput.disabled = true;
+        riddleBtn.disabled = true;
+        riddleBtn.textContent = 'Unlocked!';
+
+        // Spider bonus glow
+        spider.classList.add('bonus');
+        setTimeout(() => spider.classList.remove('bonus'), 3000);
+
+        // Auto-play bonus track
+        currentTrack = playlist.length - 1;
+        playSample();
+        showSyncedLyrics(playlist[currentTrack]);
+        openDrawer(); // Show updated playlist
+        renderPlaylist();
+        updateActiveTrack();
+
+        // Web trail celebration
+        pointToSidebar();
+      }
+    } else {
+      // Error
+      riddleError.classList.add('show');
+      riddleSuccess.classList.remove('show');
+      setTimeout(() => riddleError.classList.remove('show'), 3000);
+    }
+    riddleInput.value = ''; // Clear input
+  };
+
+  // Allow Enter key for riddle
+  riddleInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      riddleBtn.click();
+    }
+  });
+
+  // Render playlist tracks in drawer
+  function renderPlaylist() {
+    const tracksContainer = document.getElementById('playlistTracks');
+    tracksContainer.innerHTML = '';
+    playlist.forEach((track, index) => {
+      const trackEl = document.createElement('div');
+      trackEl.className = 'track' + (index === currentTrack ? ' active' : '');
+      trackEl.innerHTML = `
+        <img src="${track.artwork}" alt="${track.title} artwork">
+        <div class="track-info">
+          <h4>${track.title}</h4>
+          <p>${index + 1} / ${playlist.length}</p>
+        </div>
+      `;
+      trackEl.onclick = () => selectTrack(index);
+      tracksContainer.appendChild(trackEl);
+    });
+  }
+
+  // Select a track
+  function selectTrack(index) {
+    currentTrack = index;
+    playSample();
+    showSyncedLyrics(playlist[currentTrack]);
+    updateActiveTrack();
+  }
+
+  // Update active track in UI
+  function updateActiveTrack() {
+    document.querySelectorAll('.track').forEach((t, i) => {
+      t.classList.toggle('active', i === currentTrack);
+    });
+    showScrollingTitle(playlist[currentTrack].title); // Fallback if lyrics not open
+  }
+
+  // Controls
+  document.getElementById('prevBtn').onclick = () => {
+    currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+    selectTrack(currentTrack);
+  };
+  document.getElementById('nextBtn').onclick = () => {
+    currentTrack = (currentTrack + 1) % playlist.length;
+    selectTrack(currentTrack);
+  };
+  document.getElementById('volumeSlider').oninput = (e) => {
+    audio.volume = e.target.value;
+  };
+  document.getElementById('closeDrawer').onclick = closeDrawer;
+  document.getElementById('closeLyrics').onclick = closeLyricsOverlay;
+
+  // Drawer functions
+  function openDrawer() {
+    playlistDrawer.classList.add('open');
+    backdrop.classList.add('show');
+    isDrawerOpen = true;
+    renderPlaylist();
+    updateActiveTrack();
+  }
+  function closeDrawer() {
+    playlistDrawer.classList.remove('open');
+    backdrop.classList.remove('show');
+    isDrawerOpen = false;
+  }
+  backdrop.onclick = closeDrawer;
+
+  // Synced Lyrics functions
+  function showSyncedLyrics(track) {
+    lyricsTitle.textContent = track.title;
+    syncedLyrics.innerHTML = '';
+    track.lyrics.forEach((wordObj, index) => {
+      const wordEl = document.createElement('span');
+      wordEl.className = 'lyric-word';
+      wordEl.textContent = wordObj.text + ' ';
+      syncedLyrics.appendChild(wordEl);
+    });
+    lyricsOverlay.classList.add('show');
+    backdrop.classList.add('show');
+    isLyricsOpen = true;
+    // Hide scrolling elements
+    scrollTitleDiv.style.display = 'none';
+    scrollLyricsDiv.style.display = 'none';
+    // Start highlighting
+    highlightLyrics(track.lyrics);
+  }
+  function closeLyricsOverlay() {
+    lyricsOverlay.classList.remove('show');
+    backdrop.classList.remove('show');
+    isLyricsOpen = false;
+    if (currentHighlightInterval) {
+      clearInterval(currentHighlightInterval);
+    }
+    // Show scrolling fallback
+    showScrollingTitle(playlist[currentTrack].title);
+    showScrollingLyrics(playlist[currentTrack].lyrics ? playlist[currentTrack].lyrics.map(l => l.text).join(' ') : 'Lyrics not available');
+  }
+  function highlightLyrics(lyrics) {
+    if (currentHighlightInterval) clearInterval(currentHighlightInterval);
+    let wordIndex = 0;
+    currentHighlightInterval = setInterval(() => {
+      if (wordIndex > 0) {
+        syncedLyrics.children[wordIndex - 1].classList.remove('active');
+      }
+      if (wordIndex < lyrics.length) {
+        syncedLyrics.children[wordIndex].classList.add('active');
+        wordIndex++;
+      } else {
+        clearInterval(currentHighlightInterval);
+        // Reset after a delay
+        setTimeout(() => {
+          Array.from(syncedLyrics.children).forEach(el => el.classList.remove('active'));
+        }, 2000);
+      }
+    }, 1500); // Approximate timing
+  }
+
+  // Fallback scrolling functions
+  function showScrollingTitle(title) {
+    scrollText.innerText = title + '   ';
+    scrollTitleDiv.style.display = 'flex';
+  }
+  function showScrollingLyrics(lyrics) {
+    lyricsText.innerText = lyrics + '   ';
+    scrollLyricsDiv.style.display = 'flex';
+  }
+
+  // Updated playSample() function
+  function playSample() {
+    audio.src = playlist[currentTrack].url;
+    audio.load();
+    audio.volume = document.getElementById('volumeSlider').value || 1;
+    audio.play().catch(error => {
+      console.error("Error playing audio:", error);
+    });
+    spider.classList.add('playing');
+    setTimeout(() => spider.classList.remove('playing'), 500);
+    if (isLyricsOpen) {
+      highlightLyrics(playlist[currentTrack].lyrics);
+    }
+  }
+
+  // Spider following function: Move to near active room
+  function followToRoom(roomId) {
+    const roomEl = rooms[roomId];
+    if (!roomEl) return;
+
+    // Get room's position relative to viewport
+    const roomRect = roomEl.getBoundingClientRect();
+    const sidebarWidth = 160; // Approximate sidebar + margin
+    const spiderOffset = 50; // Distance from room edge
+
+    // Calculate spider position: left near content start, top aligned to room center
+    const newLeft = sidebarWidth + 20; // Hover near left of content
+    const newTop = roomRect.top + window.scrollY + (roomRect.height / 2) - 25; // Center vertically on room, adjust for spider size
+
+    // Smoothly animate spider to new position
+    spiderContainer.style.left = newLeft + 'px';
+    spiderContainer.style.top = Math.max(80, newTop) + 'px'; // Prevent going too high
+
+    // If room is Game, make it "hover higher" (adjust top upward)
+   
+      
+          if (roomId === 'game') {
+      spiderContainer.style.top = (newTop - 50) + 'px'; // Higher for Game room emphasis
+    }
+
+    currentRoomId = roomId;
+  }
+
+  // Web trail pointing animation: Point to sidebar on click
+  function pointToSidebar() {
+    // Position trail from spider to left (sidebar)
+    const spiderRect = spiderContainer.getBoundingClientRect();
+    webTrail.style.left = (spiderRect.left + 25) + 'px'; // From spider center
+    webTrail.style.top = (spiderRect.top + 50) + 'px'; // From spider bottom
+    webTrail.classList.add('show', 'pointing');
+
+    // Animate trail growth and fade out
+    setTimeout(() => {
+      webTrail.classList.remove('show', 'pointing');
+    }, 2000);
+  }
+
+  // Animate the spider: walk, wobble, glow, drop, open drawer, and point
+  function animateSpider() {
+    // Reset classes and styles
+    spider.className = '';
+    spider.style.transition = '';
+    spider.style.transform = '';
+    // Start walking
+    spider.style.animation = 'walk 2s steps(4) infinite';
+
+    setTimeout(() => {
+      // Pause walk
+      spider.style.animation = '';
+      // Add glow effect
+      spider.classList.add('activated');
+      // Wobble for 2 seconds
+      spider.classList.add('wobble');
+      setTimeout(() => {
+        spider.classList.remove('wobble');
+        // Drop to center and move slightly right for guidance feel
+        spiderContainer.style.top = '50%';
+        spiderContainer.style.left = '60px';
+        // Point to sidebar, open drawer, and play
+        setTimeout(() => {
+          pointToSidebar(); // New: Pointing animation
+          openDrawer();
+          playSample();
+          if (!isLyricsOpen) {
+            showSyncedLyrics(playlist[currentTrack]);
+          }
+        }, 1000);
+      }, 2000);
+    }, 2000);
+  }
+
+  // Navigation from sidebar (anchor to room with rising/falling animation and spider follow)
+  document.querySelectorAll('.roomLink').forEach(link => {
+    link.onclick = (e) => {
+      e.preventDefault();
+      const roomId = link.dataset.room;
+      const roomEl = document.getElementById(roomId);
+      
+      // Update active link in sidebar
+      document.querySelectorAll('.roomLink').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      
+      // Reset all rooms to inactive
+      Object.values(rooms).forEach(room => {
+        room.classList.remove('active');
+      });
+      
+      // Add active class to target room for animation (rising)
+      roomEl.classList.add('active');
+      
+      // Scroll to room, ensuring title anchors properly
+      if (roomId === 'top') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (roomId === 'social') {
+        roomEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        roomEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      
+      // Make spider follow to the active room
+      setTimeout(() => {
+        followToRoom(roomId);
+      }, 600); // After scroll animation
+    };
+  });
+
+  // When clicking the spider
+  spider.addEventListener('click', () => {
+    if (!isDropped) {
+      animateSpider();
+      isDropped = true;
+    } else {
+      // Toggle play/pause if drawer is open
+      if (isDrawerOpen) {
+        if (audio.paused) {
+          playSample();
+          if (!isLyricsOpen) {
+            showSyncedLyrics(playlist[currentTrack]);
+          }
+        } else {
+          audio.pause();
+          if (isLyricsOpen) {
+            closeLyricsOverlay();
+          }
+        }
+        // Point to sidebar on each click for guidance
+        pointToSidebar();
+      } else {
+        // If drawer closed, open it and point
+        pointToSidebar();
+        openDrawer();
+      }
+    }
+    // Activate glow
+    spider.classList.add('activated');
+    // Greet if not yet
+    if (!hasGreeted) {
+      greeting.classList.add('show');
+      setTimeout(() => greeting.classList.remove('show'), 3000);
+      hasGreeted = true;
+    }
+  });
+
+  // When song ends, auto-play next
+  audio.addEventListener('ended', () => {
+    currentTrack = (currentTrack + 1) % playlist.length;
+    selectTrack(currentTrack);
+  });
+
+  // Pause highlighting on audio pause
+  audio.addEventListener('pause', () => {
+    if (currentHighlightInterval) {
+      clearInterval(currentHighlightInterval);
+    }
+    Array.from(syncedLyrics.children).forEach(el => el.classList.remove('active'));
+  });
+
+  // Initialize on load
+  window.addEventListener('load', () => {
+    renderPlaylist();
+    // Initial follow to home
+    followToRoom('top');
+    // Initial greeting without full animation
+    if (!hasGreeted) {
+      greeting.classList.add('show');
+      setTimeout(() => greeting.classList.remove('show'), 3000);
+      hasGreeted = true;
+    }
+  });
+  </script>
+</body>
+</html>  .room {
     background: rgba(128, 0, 128, 0.1); /* Purple-tinted sections */
     padding: 20px;
     border-radius: 8px;
