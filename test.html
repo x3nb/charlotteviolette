@@ -395,4 +395,252 @@
       transition: opacity 0.5s ease;
       display: none;
     }
-    #riddleSuccess.show, #
+    #riddleSuccess.show, #riddleError.show {
+      display: block;
+      opacity: 1;
+    }
+    #riddleSuccess { color: #9370db; font-weight: bold; }
+    #riddleError { color: #ff6b6b; }
+    /* Mobile */
+    @media (max-width: 768px) {
+      #sidebar { width: 100%; height: auto; flex-direction: row; justify-content: center; }
+      #content { margin-left: 0; }
+      #spider { font-size: 40px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Bubbles -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
+  <!-- Scrolling Elements -->
+  <div id="scrollTitle"><div id="scrollText"></div></div>
+  <div id="scrollLyrics"><div id="lyricsText"></div></div>
+
+  <!-- Intro Web -->
+  <div id="introWeb">
+    <svg id="webSVG" width="100%" height="100%" viewBox="0 0 100 100">
+      <!-- Central node (spider position) -->
+      <circle cx="50" cy="50" r="2" fill="#9370db" opacity="0">
+        <animate attributeName="opacity" from="0" to="1" dur="1s" begin="0.5s" fill="freeze"/>
+        <animate attributeName="r" from="0" to="2" dur="0.5s" begin="0.5s" fill="freeze"/>
+      </circle>
+      <!-- Radial strands (8 lines expanding outward, like spider legs/web) -->
+      <line x1="50" y1="50" x2="50" y2="0" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="5,5">
+        <animate attributeName="opacity" from="0" to="0.6" dur="2s" begin="1s" fill="freeze"/>
+        <animate attributeName="y2" from="50" to="0" dur="2s" begin="1s" fill="freeze"/>
+      </line>
+      <line x1="50" y1="50" x2="100" y2="50" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="5,5">
+        <animate attributeName="opacity" from="0" to="0.6" dur="2s" begin="1.2s" fill="freeze"/>
+        <animate attributeName="x2" from="50" to="100" dur="2s" begin="1.2s" fill="freeze"/>
+      </line>
+      <line x1="50" y1="50" x2="0" y2="50" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="5,5">
+        <animate attributeName="opacity" from="0" to="0.6" dur="2s" begin="1.4s" fill="freeze"/>
+        <animate attributeName="x2" from="50" to="0" dur="2s" begin="1.4s" fill="freeze"/>
+      </line>
+      <line x1="50" y1="50" x2="50" y2="100" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="5,5">
+        <animate attributeName="opacity" from="0" to="0.6" dur="2s" begin="1.6s" fill="freeze"/>
+        <animate attributeName="y2" from="50" to="100" dur="2s" begin="1.6s" fill="freeze"/>
+      </line>
+      <!-- Diagonal strands for fuller web (4 more for epic spread) -->
+      <line x1="50" y1="50" x2="100" y2="0" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="5,5">
+        <animate attributeName="opacity" from="0" to="0.4" dur="2s" begin="1.8s" fill="freeze"/>
+        <animate attributeName="x2" from="50" to="100" dur="2s" begin="1.8s" fill="freeze"/>
+        <animate attributeName="y2" from="50" to="0" dur="2s" begin="1.8s" fill="freeze"/>
+      </line>
+      <line x1="50" y1="50" x2="0" y2="0" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="5,5">
+        <animate attributeName="opacity" from="0" to="0.4" dur="2s" begin="2s" fill="freeze"/>
+        <animate attributeName="x2" from="50" to="0" dur="2s" begin="2s" fill="freeze"/>
+        <animate attributeName="y2" from="50" to="0" dur="2s" begin="2s" fill="freeze"/>
+      </line>
+      <line x1="50" y1="50" x2="100" y2="100" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="5,5">
+        <animate attributeName="opacity" from="0" to="0.4" dur="2s" begin="2.2s" fill="freeze"/>
+        <animate attributeName="x2" from="50" to="100" dur="2s" begin="2.2s" fill="freeze"/>
+        <animate attributeName="y2" from="50" to="100" dur="2s" begin="2.2s" fill="freeze"/>
+      </line>
+      <line x1="50" y1="50" x2="0" y2="100" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="5,5">
+        <animate attributeName="opacity" from="0" to="0.4" dur="2s" begin="2.4s" fill="freeze"/>
+        <animate attributeName="x2" from="50" to="0" dur="2s" begin="2.4s" fill="freeze"/>
+        <animate attributeName="y2" from="50" to="100" dur="2s" begin="2.4s" fill="freeze"/>
+      </line>
+      <!-- Outer ring (expanding circle) -->
+      <circle cx="50" cy="50" r="0" fill="none" stroke="#9370db" stroke-width="1" opacity="0" stroke-dasharray="10,10">
+        <animate attributeName="opacity" from="0" to="0.3" dur="3s" begin="1s" fill="freeze"/>
+        <animate attributeName="r" from="0" to="45" dur="3s" begin="1s" fill="freeze"/>
+      </circle>
+    </svg>
+    <!-- Simple CSS fallback web (concentric around spider) -->
+    <div id="webFallback"></div>
+  </div>
+
+  <!-- Site Container (hidden initially, reveals after web) -->
+  <div id="siteContainer">
+    <!-- Sidebar for navigation -->
+    <div id="sidebar">
+      <div class="roomLink active" data-room="top">Home</div>
+      <div class="roomLink" data-room="instructions">Instructions</div>
+      <div class="roomLink" data-room="game">Game</div>
+      <div class="roomLink" data-room="social">Social</div>
+    </div>
+
+    <!-- Spider container (starts centered for intro) -->
+    <div id="spiderContainer">
+      <div id="web"></div> <!-- Small web around spider -->
+      <div id="greeting">Greetings, wanderer! Click to hear the tunes.</div>
+      <div id="spider" title="Click me">🕷️</div>
+    </div>
+
+    <!-- Content sections (rooms) -->
+    <div id="content">
+      <div id="top" class="room active">
+        <h2>Welcome</h2>
+        <p>Use the sidebar to navigate rooms. Click the spider to meet your guide and listen to music!</p>
+      </div>
+      <div id="instructions" class="room">
+        <h2>Instructions</h2>
+        <p>This is the instructions room. Anchored here—explore like entering a new chamber. Click the spider to meet here and listen to sample music.</p>
+      </div>
+      <div id="game" class="room">
+        <h2>Game</h2>
+        <p>This is the game room. Anchored at the heart—feel the adventure. Click the spider to join and listen.</p>
+        <div id="gameRiddle">
+          <div id="riddleText">Riddle: I weave the night with silken thread, eight legs I tread where shadows spread. What am I?</div>
+          <input type="text" id="riddleInput" placeholder="Your answer..." autocomplete="off">
+          <button id="riddleBtn">Weave the Web</button>
+          <div id="riddleSuccess">🕷️ The web is woven! Bonus track unlocked.</div>
+          <div id="riddleError">Not quite... Try again, wanderer.</div>
+        </div>
+      </div>
+      <div id="social" class="room fall">
+        <h2>Social</h2>
+        <p>This is the social room. Anchored below—connect in the web. Click the spider to connect and listen.</p>
+      </div>
+    </div>
+
+    <!-- Backdrop for overlays -->
+    <div id="backdrop"></div>
+
+    <!-- Web Trail Element -->
+    <div id="webTrail"></div>
+
+    <!-- Playlist Drawer -->
+    <div id="playlistDrawer">
+      <button id="closeDrawer">&times;</button>
+      <h3 style="font-family: 'Cinzel', serif; color: #9370db;">Playlist</h3>
+      <div id="playlistTracks"></div>
+      <div id="playlistControls">
+        <button id="prevTrack">&lt;</button>
+        <button id="playPause">⏸️</button>
+        <button id="nextTrack">&gt;</button>
+        <br><label>Volume: <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5"></label>
+      </div>
+    </div>
+
+    <!-- Synced Lyrics Overlay -->
+    <div id="lyricsOverlay">
+      <button id="closeLyrics">&times;</button>
+      <h3 id="lyricsTitle"></h3>
+      <div id="syncedLyrics"></div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audio" preload="auto">
+      <source src="" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <script>
+    // Variables
+    const spider = document.getElementById('spider');
+    const spiderContainer = document.getElementById('spiderContainer');
+    const greeting = document.getElementById('greeting');
+    const audio = document.getElementById('audio');
+    const playlistDrawer = document.getElementById('playlistDrawer');
+    const closeDrawer = document.getElementById('closeDrawer');
+    const backdrop = document.getElementById('backdrop');
+    const webTrail = document.getElementById('webTrail');
+    const lyricsOverlay = document.getElementById('lyricsOverlay');
+    const closeLyrics = document.getElementById('closeLyrics');
+    const syncedLyrics = document.getElementById('syncedLyrics');
+    const lyricsTitle = document.getElementById('lyricsTitle');
+    const scrollTitle = document.getElementById('scrollTitle');
+    const scrollLyrics = document.getElementById('scrollLyrics');
+    const scrollText = document.getElementById('scrollText');
+    const lyricsText = document.getElementById('lyricsText');
+    const playlistTracks = document.getElementById('playlistTracks');
+    const prevTrack = document.getElementById('prevTrack');
+    const nextTrack = document.getElementById('nextTrack');
+    const playPause = document.getElementById('playPause');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const riddleInput = document.getElementById('riddleInput');
+    const riddleBtn = document.getElementById('riddleBtn');
+    const riddleSuccess = document.getElementById('riddleSuccess');
+    const riddleError = document.getElementById('riddleError');
+
+    let currentTrack = 0;
+    let isDrawerOpen = false;
+    let isLyricsOpen = false;
+    let isDropped = false;
+    let hasGreeted = false;
+    let bonusUnlocked = false;
+    let currentHighlightInterval = null;
+    const rooms = {
+      top: document.getElementById('top'),
+      instructions: document.getElementById('instructions'),
+      game: document.getElementById('game'),
+      social: document.getElementById('social')
+    };
+
+    // Playlist with tracks, lyrics, and timings (synced words in ms arrays)
+    const playlist = [
+      {
+        title: 'Midnight Sonata',
+        artist: 'Shadow Weaver',
+        src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Placeholder; replace with real
+        artwork: 'data:image/svg+xml;base64,...', // Base64 placeholder or URL
+        lyrics: 'In the midnight hour, shadows dance so free...',
+        syncedLyrics: ['In', 'the', 'midnight', 'hour,', 'shadows', 'dance', 'so', 'free...'], // Word array
+        timings: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500] // ms for each word
+      },
+      {
+        title: 'Whispers in the Web',
+        artist: 'Silk Phantom',
+        src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        artwork: 'data:image/svg+xml;base64,...',
+        lyrics: 'Threads of fate entwine, in the velvet night...',
+        syncedLyrics: ['Threads', 'of', 'fate', 'entwine,', 'in', 'the', 'velvet', 'night...'],
+        timings: [0, 600, 1200, 1800, 2400, 3000, 3600, 4200]
+      },
+      {
+        title: 'Echoes of Paris',
+        artist: 'Gothic Muse',
+        src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+        artwork: 'data:image/svg+xml;base64,...',
+        lyrics: 'Under Eiffel lights, secrets softly call...',
+        syncedLyrics: ['Under', 'Eiffel', 'lights,', 'secrets', 'softly', 'call...'],
+        timings: [0, 700, 1400, 2100, 2800, 3500]
+      }
+    ];
+
+    // Bonus Track (unlocks via riddle)
+    const bonusTrack = {
+      title: 'Web of Secrets',
+      artist: 'Arachne\'s Lullaby',
+      src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', // Bonus placeholder
+      artwork: 'data:image/svg+xml;base64,...',
+      lyrics: 'Hidden in the strands, truths await the brave...',
+      syncedLyrics: ['Hidden', 'in', 'the', 'strands,', 'truths', 'await', 'the', 'brave...'],
+      timings: [0, 800, 1600, 2400, 3200, 4000, 4800, 5600]
+    };
+
+    // Render Playlist in Drawer
+    function renderPlaylist() {
+      playlistTracks.innerHTML = '';
+      playlist.forEach((track, index) => {
+        const trackEl = document.createElement('div');
+        trackEl.className = 'track'
