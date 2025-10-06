@@ -643,4 +643,358 @@
       playlistTracks.innerHTML = '';
       playlist.forEach((track, index) => {
         const trackEl = document.createElement('div');
-        trackEl.className = 'track'
+        trackEl.className = 'track' + (index === currentTrack ? ' active' : '');
+        trackEl.innerHTML = `
+          <img src="${track.artwork}" alt="${track.title}">
+          <div class="track-info">
+            <h4>${track.title}</h4>
+            <p>${track.artist}</p>
+          </div>
+        `;
+        trackEl.onclick = () => selectTrack(index);
+        playlistTracks.appendChild(trackEl);
+      });
+      updateActiveTrack();
+    }
+
+    function selectTrack(index) {
+      currentTrack = index;
+      audio.src = playlist[index].src;
+      audio.play();
+      renderPlaylist();
+      showSyncedLyrics(playlist[index]);
+      updateScrollingElements();
+    }
+
+    function updateActiveTrack() {
+      document.querySelectorAll('.track').forEach((t, i) => {
+        t.classList.toggle('active', i === currentTrack);
+      });
+    }
+
+    // Play/Pause Sample
+    function playSample() {
+      if (audio.paused) {
+        audio.play();
+        playPause.textContent = '⏸️';
+        if (!isLyricsOpen) {
+          showSyncedLyrics(playlist[currentTrack]);
+        }
+      } else {
+        audio.pause();
+        playPause.textContent = '▶️';
+      }
+    }
+
+    // Volume Control
+    volumeSlider.oninput = (e) => {
+      audio.volume = e.target.value;
+    };
+
+    // Navigation Controls
+    prevTrack.onclick = () => {
+      currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+      selectTrack(currentTrack);
+    };
+    nextTrack.onclick = () => {
+      currentTrack = (currentTrack + 1) % playlist.length;
+      selectTrack(currentTrack);
+    };
+    playPause.onclick = playSample;
+
+    // Update Scrolling Elements (Fallback Lyrics/Title)
+    function updateScrollingElements() {
+      const track = playlist[currentTrack];
+      scrollText.textContent = track.title + ' - ' + track.artist;
+      lyricsText.textContent = track.lyrics;
+    }
+
+    // Synced Lyrics Overlay
+    function showSyncedLyrics(track) {
+      lyricsTitle.textContent = track.title + ' - ' + track.artist;
+      syncedLyrics.innerHTML = track.syncedLyrics.map(word => `<span class="lyric-word">${word}</span>`).join(' ');
+      lyricsOverlay.classList.add('show');
+      isLyricsOpen = true;
+      backdrop.classList.add('show');
+
+      // Highlight words based on timings
+      let wordIndex = 0;
+      currentHighlightInterval = setInterval(() => {
+        if (wordIndex < track.syncedLyrics.length) {
+          // Remove previous active class
+          document.querySelectorAll('.lyric-word').forEach(w => w.classList.remove('active'));
+          // Add active to current word
+          document.querySelectorAll('.lyric-word')[wordIndex].classList.add('active');
+          wordIndex++;
+        } else {
+          clearInterval(currentHighlightInterval);
+          // Loop back or pause at end
+          wordIndex = 0;
+        }
+      }, 500); // Update every 500ms (adjust for sync)
+    }
+
+    // Close Lyrics Overlay
+    closeLyrics.onclick = () => {
+      lyricsOverlay.classList.remove('show');
+      backdrop.classList.remove('show');
+      isLyricsOpen = false;
+      if (currentHighlightInterval) {
+        clearInterval(currentHighlightInterval);
+        currentHighlightInterval = null;
+      }
+    };
+
+    // Open/Close Playlist Drawer
+    function openDrawer() {
+      playlistDrawer.classList.add('open');
+      isDrawerOpen = true;
+      backdrop.classList.add('show');
+      renderPlaylist();
+    }
+
+    closeDrawer.onclick = () => {
+      playlistDrawer.classList.remove('open');
+      isDrawerOpen = false;
+      backdrop.classList.remove('show');
+    };
+
+    // Web Trail Pointing Animation
+    function pointToSidebar() {
+      const spiderRect = spiderContainer.getBoundingClientRect();
+      const sidebarRect = document.getElementById('sidebar').getBoundingClientRect();
+      const distanceToSidebar = spiderRect.left - sidebarRect.right;
+      
+      webTrail.style.left = (spiderRect.left - 25) + 'px';
+      webTrail.style.top = (spiderRect.top + 25) + 'px';
+      webTrail.style.height = Math.max(100, Math.abs(distanceToSidebar * 0.5)) + 'px';
+      
+      webTrail.classList.add('show', 'pointing');
+      webTrail.style.transform = 'rotate(-45deg) scale(1.2)';
+      setTimeout(() => {
+        webTrail.style.transform = 'rotate(-45deg) scale(1)';
+      }, 200);
+
+      setTimeout(() => {
+        webTrail.classList.remove('show', 'pointing');
+        webTrail.style.height = '0';
+        webTrail.style.transform = 'rotate(0deg) scale(1)';
+      }, 2000);
+    }
+
+    // Spider Animations
+    function animateSpider() {
+      spider.classList.add('activated');
+      spider.style.animation = 'wobble 0.5s ease-in-out';
+      setTimeout(() => {
+        spider.style.animation = 'walk 2s steps(4) infinite';
+      }, 500);
+
+      // Drop to center
+      spiderContainer.style.top = '50%';
+      spiderContainer.style.left = '50%';
+      spiderContainer.style.transform = 'translate(-50%, -50%)';
+
+      // Point trail, open drawer, play
+      pointToSidebar();
+      openDrawer();
+      playSample();
+      if (!isLyricsOpen) {
+        showSyncedLyrics(playlist[currentTrack]);
+      }
+    }
+
+    // Spider Follow to Room
+    function followToRoom(roomId) {
+      const roomEl = rooms[roomId];
+      if (!roomEl) return;
+      const roomRect = roomEl.getBoundingClientRect();
+      let targetTop = roomRect.top + window.scrollY - 100; // Offset above room
+      let targetLeft = roomRect.left + 50; // Near content
+
+      // Adjust for specific rooms
+      if (roomId === 'game') {
+        targetTop -= 50; // Higher for Game room
+        spiderContainer.classList.add('heroic'); // Optional glow
+      } else if (roomId === 'social') {
+        targetTop += 50; // Lower for Social
+      }
+
+      spiderContainer.style.top = targetTop + 'px';
+      spiderContainer.style.left = targetLeft + 'px';
+      spiderContainer.style.transform = 'none';
+    }
+
+    // Room Navigation
+    document.querySelectorAll('.roomLink').forEach(link => {
+      link.onclick = () => {
+        const roomId = link.dataset.room;
+        // Update active
+        document.querySelectorAll('.roomLink').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        // Show room
+        document.querySelectorAll('.room').forEach(r => r.classList.remove('active', 'rise', 'fall'));
+        rooms[roomId].classList.add('active');
+        if (roomId === 'game') {
+          rooms[roomId].classList.add('rise');
+        } else if (roomId === 'social') {
+          rooms[roomId].classList.add('fall');
+        }
+        // Scroll to room
+        rooms[roomId].scrollIntoView({ behavior: 'smooth' });
+        // Spider follows
+        followToRoom(roomId);
+        // Point trail if spider clicked recently
+        setTimeout(() => pointToSidebar(), 500);
+      };
+    });
+
+    // Spider Click Handler
+    spider.addEventListener('click', () => {
+      if (document.getElementById('siteContainer').classList.contains('revealed')) {
+        if (!isDropped) {
+          animateSpider();
+          isDropped = true;
+        } else {
+          // Toggle play/pause
+          playSample();
+          // Wobble on pause
+          if (audio.paused) {
+            spider.classList.add('wobble');
+            setTimeout(() => spider.classList.remove('wobble'), 1000);
+          }
+          // Point trail on each click
+          pointToSidebar();
+          // Toggle drawer if open
+          if (isDrawerOpen) {
+            closeDrawer.click();
+          } else {
+            openDrawer();
+          }
+        }
+      } else {
+        // During intro: Just activate glow
+        spider.classList.add('activated');
+      }
+    });
+
+    // Game Room Riddle
+    const correctAnswer = 'spider';
+    riddleBtn.onclick = () => {
+      const answer = riddleInput.value.trim().toLowerCase();
+      if (answer === correctAnswer) {
+        if (!bonusUnlocked) {
+          playlist.push(bonusTrack);
+          bonusUnlocked = true;
+          riddleSuccess.classList.add('show');
+          riddleError.classList.remove('show');
+          riddleInput.disabled = true;
+          riddleBtn.disabled = true;
+          riddleBtn.textContent = 'Unlocked!';
+
+          // Bonus effects
+          spider.classList.add('bonus');
+          setTimeout(() => spider.classList.remove('bonus'), 3000);
+          pointToSidebar(); // Celebrate with trail
+
+          // Auto-play bonus
+          currentTrack = playlist.length - 1;
+          playSample();
+          showSyncedLyrics(playlist[currentTrack]);
+          openDrawer();
+          renderPlaylist();
+          updateActiveTrack();
+        }
+      } else {
+        riddleError.classList.add('show');
+        riddleSuccess.classList.remove('show');
+        setTimeout(() => riddleError.classList.remove('show'), 3000);
+      }
+      riddleInput.value = '';
+    };
+
+    riddleInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') riddleBtn.click();
+    });
+
+    // Auto-next Track on End
+    audio.addEventListener('ended', () => {
+      nextTrack.click();
+    });
+
+    // Intro Sequence on Load
+    window.addEventListener('load', () => {
+      // Show spider subtly
+      spider.style.opacity = '1';
+      spider.style.animation = 'walk 2s steps(4) infinite';
+
+      const introWeb = document.getElementById('introWeb');
+      const siteContainer = document.getElementById('siteContainer');
+      const webSVG = document.getElementById('webSVG');
+
+      // Start web (SVG animates via CSS)
+      setTimeout(() => {
+        webSVG.style.opacity = '0.7';
+      }, 500);
+
+      // Reveal after 4s
+      setTimeout(() => {
+        introWeb.classList.add('revealed');
+        siteContainer.classList.add('revealed');
+        
+        // Move spider to start position
+        spiderContainer.style.top = '80px';
+        spiderContainer.style.left = '50px';
+        spiderContainer.style.transform = 'none';
+        
+        // Init features
+        renderPlaylist();
+        followToRoom('top');
+        if (!hasGreeted) {
+          greeting.classList.add('show');
+          setTimeout(() => greeting.classList.remove('show'), 3000);
+          hasGreeted = true;
+        }
+        
+        // Reset for drop
+        isDropped = false;
+        spider.style.animation = '';
+      }, 4000);
+
+      // Initial scrolling elements
+      updateScrollingElements();
+    });
+
+    // Backdrop Click to Close Overlays
+    backdrop.addEventListener('click', () => {
+      if (isDrawerOpen) closeDrawer.click();
+      if (isLyricsOpen) closeLyrics.click();
+    });
+
+    // Fallback Web Around Spider (CSS-animated)
+    const web = document.getElementById('web');
+    web.style.cssText = `
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      width: 90px;
+      height: 90px;
+      border: 1px dashed rgba(147, 112, 219, 0.3);
+      border-radius: 50%;
+      opacity: 0;
+      animation: webSpin 3s ease-in-out infinite;
+    `;
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes webSpin {
+        0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.3; }
+        50% { transform: rotate(180deg) scale(1.1); opacity: 0.5; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Initial Setup
+    audio.volume = 0.5;
+  </script>
+</body>
+</html>
