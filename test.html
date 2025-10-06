@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spider Web Gothic Experience</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Lora', serif;
+      background: linear-gradient(135deg, #2c003e, #4d5566, #1a1f1f);
+      overflow-x: hidden;
+      color: #ddd;
+      position: relative;
+    }
+    /* Bubbles Background */
+    .bubble {
+      position: fixed;
+      bottom: -100px;
+      width: 100px;
+      height: 100px;
+      background: rgba(147, 112, 219, 0.1);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+      z-index: 0;
+    }
+    .bubble:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .bubble:nth-child(2) { left: 20%; animation-delay: 2s; width: 80px; height: 80px; }
+    .bubble:nth-child(3) { left: 70%; animation-delay: 4s; }
+    .bubble:nth-child(4) { left: 80%; animation-delay: 1s; width: 60px; height: 60px; }
+    .bubble:nth-child(5) { left: 90%; animation-delay: 3s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    /* Sidebar Navigation */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 150px;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 10px;
+      z-index: 10;
+      transition: background 0.3s;
+    }
+    .roomLink {
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      color: #ccc;
+      transition: all 0.3s;
+    }
+    .roomLink:hover, .roomLink.active {
+      background: rgba(147, 112, 219, 0.5);
+      color: #fff;
+      transform: translateX(5px);
+    }
+    /* Content Rooms */
+    #content {
+      margin-left: 170px;
+      padding: 20px;
+      max-width: 800px;
+    }
+    .room {
+      min-height: 50vh;
+      padding: 40px 0;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s ease;
+      font-family: 'Lora', serif;
+    }
+    .room.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .room.rise { transform: translateY(-20px); } /* For upper rooms */
+    .room.fall { transform: translateY(20px); } /* For lower rooms */
+    h2 {
+      font-family: 'Cinzel', serif;
+      color: #9370db;
+      font-size: 2.5em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    /* Spider Container */
+    #spiderContainer {
+      position: fixed;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      transition: top 1s ease 4s, left 1s ease 4s, transform 1s ease 4s;
+    }
+    #spider {
+      font-size: 50px;
+      cursor: pointer;
+      display: inline-block;
+      animation: walk 2s steps(4) infinite;
+      transform-origin: bottom left;
+      transition: box-shadow 0.3s, filter 0.3s;
+      opacity: 0; /* Start hidden, JS will show it */
+    }
+    #spider.activated {
+      box-shadow: 0 0 20px #9370db;
+      filter: brightness(1.2);
+    }
+    #spider.bonus {
+      animation: bonusPulse 1s ease-in-out 3;
+      box-shadow: 0 0 30px #9370db, inset 0 0 20px #9370db;
+    }
+    @keyframes walk {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @keyframes wobble {
+      0%, 100% { transform: rotate(0); }
+      25% { transform: rotate(3deg); }
+      75% { transform: rotate(-3deg); }
+    }
+    #spider.wobble { animation: wobble 0.5s infinite; }
+    @keyframes bonusPulse {
+      0%, 100% { filter: brightness(1.2); }
+      50% { filter: brightness(1.5); }
+    }
+    #greeting {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      padding: 5px 10px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.5s;
+      font-family: 'Cinzel', serif;
+      color: #9370db;
+    }
+    #greeting.show { opacity: 1; }
+    /* Scrolling Elements */
+    #scrollTitle, #scrollLyrics {
+      position: fixed;
+      width: 100%;
+      height: 30px;
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      font-size: 1.1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 5;
+    }
+    #scrollTitle { top: 0; }
+    #scrollLyrics { bottom: 0; }
+    #scrollText, #lyricsText {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scroll-left 15s linear infinite;
+      font-family: 'Cinzel', serif;
+    }
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+    /* Overlays */
+    #backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 15;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    #backdrop.show { opacity: 1; }
+    /* Playlist Drawer */
+    #playlistDrawer {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 20px;
+      z-index: 20;
+      transition: right 0.3s;
+      overflow-y: auto;
+    }
+    #playlistDrawer.open { right: 0; }
+    #closeDrawer {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .track {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .track:hover, .track.active {
+      background: rgba(147, 112, 219, 0.3);
+    }
+    .track img { width: 50px; height: 50px; border-radius: 4px; margin-right: 10px; }
+    .track-info h4 { margin: 0; font-family: 'Cinzel', serif; }
+    #playlistControls { margin-top: 20px; text-align: center; }
+    #playlistControls button {
+      background: rgba(147, 112, 219, 0.5);
+      border: none;
+      color: #fff;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #volumeSlider { width: 100px; }
+    /* Synced Lyrics Overlay */
+    #lyricsOverlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-width: 600px;
+      background: rgba(0,0,0,0.9);
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      z-index: 25;
+      opacity: 0;
+      transition: opacity 0.3s;
+      text-align: center;
+    }
+    #lyricsOverlay.show { opacity: 1; }
+    #closeLyrics {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    #lyricsTitle { font-family: 'Cinzel', serif; color: #9370db; margin-bottom: 20px; }
+    .lyric-word {
+      margin: 0 2px;
+      padding: 2px 4px;
+      transition: all 0.3s;
+      font-family: 'Lora', italic;
+    }
+    .lyric-word.active {
+      color: #9370db;
+      transform: scale(1.2);
+      text-shadow: 0 0 10px #9370db;
+    }
+    /* Web Trail */
+    #webTrail {
+      position: fixed;
+      width: 2px;
+      height: 0;
+      background: linear-gradient(to bottom, transparent, #9370db);
+      z-index: 18;
+      opacity: 0;
+      transition: all 0.5s ease;
+      pointer-events: none;
+      box-shadow: 0 0 5px rgba(147, 112, 219, 0.5);
+      border-radius: 1px;
+    }
+    #webTrail.show { opacity: 0.8; }
+    #webTrail.pointing {
+      height: 150px;
+      transform: rotate(-45deg);
+      border: 1px dashed rgba(147, 112, 219, 0.3);
+    }
+    #webTrail::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: -5px;
+      width: 4px;
+      height: 4px;
+      background: #9370db;
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: trailPulse 1s ease-in-out infinite alternate;
+    }
+    @keyframes trailPulse {
+      0% { opacity: 0.6; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+    /* Intro Web */
+    #introWeb {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 30;
+      opacity: 1;
+      transition: opacity 1s ease 3s;
+      background: rgba(147, 112, 219, 0.1);
+      pointer-events: none;
+    }
+    #introWeb.revealed { opacity: 0; }
+    #webSVG {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      height: 400px;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 10px rgba(147, 112, 219, 0.5));
+      animation: webWeave 4s ease-out forwards;
+    }
+    @keyframes webWeave {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      20% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.8); }
+      100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.2); }
+    }
+    #siteContainer {
+      opacity: 0;
+      transition: opacity 1s ease 4s;
+      position: relative;
+      z-index: 1;
+    }
+    #siteContainer.revealed { opacity: 1; }
+    /* Game Riddle */
+    #gameRiddle {
+      text-align: center;
+      margin: 20px 0;
+      font-family: 'Cinzel', serif;
+      color: #9370db;
+    }
+    #riddleText {
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+    #riddleInput {
+      padding: 10px;
+      background: rgba(147, 112, 219, 0.2);
+      border: 1px solid #9370db;
+      color: #ddd;
+      border-radius: 4px;
+      width: 200px;
+      font-family: 'Lora', serif;
+    }
+    #riddleInput:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(147, 112, 219, 0.5);
+    }
+    #riddleBtn {
+      padding: 10px 20px;
+      background: rgba(147, 112, 219, 0.5);
+      border: none;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+      font-family: 'Cinzel', serif;
+      transition: background 0.3s;
+    }
+    #riddleBtn:hover { background: rgba(147, 112, 219, 0.7); }
+    #riddleBtn:disabled {
+      background: rgba(128, 128, 128, 0.5);
+      cursor: not-allowed;
+    }
+   }
+    #riddleSuccess, #riddleError {
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      display: none;
+    }
+    #riddleSuccess.show, #
