@@ -260,7 +260,9 @@
             letter-spacing: 1px; 
             font-weight: 400; /* Lighter for fluid type */
             text-shadow: 0 0 2px rgba(100, 149, 237, 0.2); /* Subtle cornflower glow on text for "moving" pop */
-       
+        }
+        .charlotte-narration.typewriter { 
+            animation: charlotteType 8s steps(120, end) forwards, blink-caret 0.75s step-end infinite; /* 8s faster pace for snappier motion */
         }
         @keyframes charlotteType { 
             from { width: 0; } 
@@ -393,150 +395,135 @@
             <button class="thread-button" onclick="followThread()">Follow the Thread to the Cafe</button>
         </div>
     </div>
-<script>
-    console.log('=== Spider Web Loading Starting ==='); // Debug
 
-    // Ensure DOM Ready (Bulletproof Spider Intro + Reel + Narration)
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM ready – Web armed.'); // Debug
+    <script>
+        console.log('=== Spider Web Loading Starting ==='); // Debug
 
-        const spiderIntro = document.getElementById('spiderIntro');
-        const loadingContainer = document.getElementById('loadingContainer');
-        const spiderAnchor = document.getElementById('spiderAnchor');
-        const reelBar = document.getElementById('reelBar');
-        const reelFill = document.getElementById('reelFill');
-        const reelText = document.getElementById('reelText');
-        const narrationContainer = document.getElementById('narrationContainer');
-        const charlotteNarration = document.getElementById('charlotteNarration');
-        const dynamicWindow = document.getElementById('dynamicWindow');
+        // Ensure DOM Ready (Bulletproof Spider Intro + Reel + Narration)
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM ready – Web armed.'); // Debug
 
-        let reelProgress = 0;
-        const reelTexts = [
-            'Web briefing... 0%',
-            'Shadows gathering... 33%',
-            'Characters awakening... 66%',
-            'Premiere imminent... 100%'
-        ];
+            const spiderIntro = document.getElementById('spiderIntro');
+            const loadingContainer = document.getElementById('loadingContainer');
+            const spiderAnchor = document.getElementById('spiderAnchor');
+            const reelBar = document.getElementById('reelBar');
+            const reelFill = document.getElementById('reelFill');
+            const reelText = document.getElementById('reelText');
+            const narrationContainer = document.getElementById('narrationContainer');
+            const charlotteNarration = document.getElementById('charlotteNarration');
+            const dynamicWindow = document.getElementById('dynamicWindow');
 
-        // JS Typewriter Function (Full Char-by-Char for No Cutoff)
-        function typeNarration() {
-            const fullText = charlotteNarration.innerHTML; // Get full content (greeting + tale)
-            charlotteNarration.innerHTML = ''; // Clear for typing
-            let i = 0;
-            const cursor = document.createElement('span');
-            cursor.innerHTML = '|';
-            cursor.style.borderRight = '2px solid #6495ED';
-            cursor.style.animation = 'blink-caret 0.75s step-end infinite'; // Reuse CSS blink
-            charlotteNarration.appendChild(cursor);
+            let reelProgress = 0;
+            const reelTexts = [
+                'escaping lab... 0%',
+                'refreshing... 3%',
+                'gathering herbs... 30%',
+                'building comfy-cafe... 66%',
+                'Premiere imminent... 100%'
+            ];
 
-            function typeChar() {
-                if (i < fullText.length) {
-                    charlotteNarration.innerHTML = fullText.substring(0, i + 1) + cursor.outerHTML;
-                    i++;
-                    // Progress log every 100 chars (e.g., "Typing 'cuppa' – Charlotte continues!")
-                    if (i % 100 === 0) {
-                        console.log(`Typing progress: ${i} chars – Charlotte continues!`); // Debug
+            // Spider Intro Sequence (6s Dramatic Total)
+            setTimeout(() => {
+                console.log('Spider web armed – Drop!'); // Debug
+            }, 100);
+
+            // Hide Intro & Reveal Reel (After 6s)
+            setTimeout(() => {
+                spiderIntro.classList.add('hidden');
+                spiderAnchor.classList.add('visible'); // Perch spider on wall
+                console.log('Spider intro complete – Reel briefing.'); // Debug
+                setTimeout(() => {
+                    reelBar.classList.add('visible');
+                    reelText.classList.add('visible');
+                    console.log('Reel threaded.'); // Debug
+                }, 500);
+            }, 6000);
+
+            // Reel Progression (3s – With Disintegrate at 100%)
+            setTimeout(() => {
+                const interval = setInterval(() => {
+                    console.log('Reel step:', reelProgress + 1); // Debug
+                    reelProgress += 33;
+                    reelFill.style.width = reelProgress + '%';
+                    reelText.textContent = reelTexts[Math.floor(reelProgress / 33)] || 'Premiere... 100%';
+                    if (reelProgress >= 100) {
+                        clearInterval(interval);
+                        console.log('Reel complete – Disintegrate 100%!'); // Debug
+                        reelText.classList.add('disintegrate'); // Trigger shatter
+                        setTimeout(() => {
+                            reelText.style.display = 'none';
+                            reelBar.style.display = 'none'; // Hide reel post-shatter
+                            console.log('Reel shattered – Narration spins immediately!'); // Debug
+                            // Bulletproof reveal: Force styles + class
+                            narrationContainer.style.display = 'block';
+                            narrationContainer.style.opacity = '1';
+                            narrationContainer.style.transform = 'scale(1)';
+                            narrationContainer.classList.add('visible');
+                            charlotteNarration.style.opacity = '1';
+                            charlotteNarration.classList.add('typewriter'); // Start 8s faster typewriter
+                            console.log('Greeting typing – Charlotte speaks!'); // Debug start
+                            // Optional: JS char-by-char for extra "movement" feel (fallback to CSS)
+                            setTimeout(() => {
+                                console.log('Narration batch 1: Greeting done.'); // Debug progress
+                            }, 2000); // After greeting header
+                            setTimeout(() => {
+                                console.log('Narration complete – Full tale spun!'); // Debug
+                                dynamicWindow.style.opacity = '1';
+                                dynamicWindow.style.transform = 'scale(1)';
+                                dynamicWindow.classList.add('visible');
+                            }, 8000); // 8s total pace
+                        }, 1000); // 1s for disintegrate
                     }
-                    setTimeout(typeChar, 100); // 100ms per char (~7.5s total for 750 chars)
-                } else {
-                    charlotteNarration.innerHTML = fullText; // Final full text
-                    cursor.remove(); // End cursor
-                    console.log('Narration complete – Full tale spun!'); // Debug
-                    // Reveal window after typing
+                }, 1000); // 1s steps for 3s
+            }, 6500); // Start after intro fade
+
+            // Fallback: Force Sequence After 10s (Bulletproof, with Immediate Narration)
+            setTimeout(() => {
+                if (spiderIntro && !spiderIntro.classList.contains('hidden')) {
+                    spiderIntro.classList.add('hidden');
+                    spiderAnchor.classList.add('visible');
+                    reelBar.classList.add('visible');
+                    reelText.classList.add('visible');
+                    reelFill.style.width = '100%';
+                    reelText.textContent = 'Premiere... 100%';
+                    reelText.classList.add('disintegrate');
+                }
+                setTimeout(() => {
+                    reelText.style.display = 'none';
+                    reelBar.style.display = 'none';
+                    // Force narration reveal
+                    narrationContainer.style.display = 'block';
+                    narrationContainer.style.opacity = '1';
+                    narrationContainer.style.transform = 'scale(1)';
+                    narrationContainer.classList.add('visible');
+                    charlotteNarration.style.opacity = '1';
+                    charlotteNarration.classList.add('typewriter');
+                    console.log('Fallback: Greeting typing – Charlotte speaks!'); // Debug start
                     setTimeout(() => {
+                        console.log('Fallback: Narration batch 1: Greeting done.'); // Debug progress
+                    }, 2000); // After greeting header
+                    setTimeout(() => {
+                        console.log('Fallback: Narration complete – Full tale spun!'); // Debug
                         dynamicWindow.style.opacity = '1';
                         dynamicWindow.style.transform = 'scale(1)';
                         dynamicWindow.classList.add('visible');
-                    }, 500); // 0.5s pause for read
-                }
+                    }, 8000); // 8s total pace
+                }, 1000); // 1s for disintegrate
+                console.log('Fallback Spider – Sequence fully spun with dialogue!'); // Debug
+            }, 10000); // 10s total fallback
+
+            // Button Click: Follow Thread to Main Page
+            function followThread() {
+                console.log('Thread followed – To the Cafe!'); // Debug
+                localStorage.setItem('spiderTicket', 'cafe-access'); // Pass to main.html for continuity (e.g., VIP teases)
+                window.location.href = 'main.html'; // Redirect to dynamic nav page
             }
-            typeChar();
-        }
 
-        // Spider Intro Sequence (6s Dramatic Total)
-        setTimeout(() => {
-            console.log('Spider web armed – Drop!'); // Debug
-        }, 100);
+            // Expose followThread globally (for onclick)
+            window.followThread = followThread;
+        });
 
-        // Hide Intro & Reveal Reel (After 6s)
-        setTimeout(() => {
-            spiderIntro.classList.add('hidden');
-            spiderAnchor.classList.add('visible'); // Perch spider on wall
-            console.log('Spider intro complete – Reel briefing.'); // Debug
-            setTimeout(() => {
-                reelBar.classList.add('visible');
-                reelText.classList.add('visible');
-                console.log('Reel threaded.'); // Debug
-            }, 500);
-        }, 6000);
-
-        // Reel Progression (3s – With Disintegrate at 100%)
-        setTimeout(() => {
-            const interval = setInterval(() => {
-                console.log('Reel step:', reelProgress + 1); // Debug
-                reelProgress += 33;
-                reelFill.style.width = reelProgress + '%';
-                reelText.textContent = reelTexts[Math.floor(reelProgress / 33)] || 'Premiere... 100%';
-                if (reelProgress >= 100) {
-                    clearInterval(interval);
-                    console.log('Reel complete – Disintegrate 100%!'); // Debug
-                    reelText.classList.add('disintegrate'); // Trigger shatter
-                    setTimeout(() => {
-                        reelText.style.display = 'none';
-                        reelBar.style.display = 'none'; // Hide reel post-shatter
-                        console.log('Reel shattered – Narration spins immediately!'); // Debug
-                        // Bulletproof reveal: Force styles + class
-                        narrationContainer.style.display = 'block';
-                        narrationContainer.style.opacity = '1';
-                        narrationContainer.style.transform = 'scale(1)';
-                        narrationContainer.classList.add('visible');
-                        charlotteNarration.style.opacity = '1';
-                        // Start JS typewriter (no CSS class needed)
-                        typeNarration(); // Calls the full char-by-char function
-                        console.log('Greeting typing – Charlotte speaks!'); // Debug start
-                    }, 1000); // 1s for disintegrate
-                }
-            }, 1000); // 1s steps for 3s
-        }, 6500); // Start after intro fade
-
-        // Fallback: Force Sequence After 10s (Bulletproof, with Immediate Narration)
-        setTimeout(() => {
-            if (spiderIntro && !spiderIntro.classList.contains('hidden')) {
-                spiderIntro.classList.add('hidden');
-                spiderAnchor.classList.add('visible');
-                reelBar.classList.add('visible');
-                reelText.classList.add('visible');
-                reelFill.style.width = '100%';
-                reelText.textContent = 'Premiere... 100%';
-                reelText.classList.add('disintegrate');
-            }
-            setTimeout(() => {
-                reelText.style.display = 'none';
-                reelBar.style.display = 'none';
-                // Force narration reveal
-                narrationContainer.style.display = 'block';
-                narrationContainer.style.opacity = '1';
-                narrationContainer.style.transform = 'scale(1)';
-                narrationContainer.classList.add('visible');
-                charlotteNarration.style.opacity = '1';
-                typeNarration(); // JS typewriter in fallback
-                console.log('Fallback: Greeting typing – Charlotte speaks!'); // Debug
-            }, 1000);
-            console.log('Fallback Spider – Sequence fully spun with dialogue!'); // Debug
-        }, 10000);
-
-        // Button Click: Follow Thread to Main Page
-        function followThread() {
-            console.log('Thread followed – To the Cafe!'); // Debug
-            localStorage.setItem('spiderTicket', 'cafe-access'); // Pass to main.html for continuity
-            window.location.href = 'main.html'; // Redirect to dynamic nav page
-        }
-
-        // Expose followThread globally (for onclick)
-        window.followThread = followThread;
-    });
-
-    console.log('Spider Web Loading Online – Spun with whimsy... Lights, camera, quest!'); // Final Debug
-</script>
+        console.log('Spider Web Loading Online – Spun with whimsy... Lights, camera, quest!'); // Final Debug
+    </script>
 </body>
 </html>
