@@ -484,4 +484,46 @@
                     reelBar.classList.add('visible');
                     reelText.classList.add('visible');
                     reelFill.style.width = '100%';
-                    reel
+                    reel Text.textContent = 'Premiere... 100%';
+                    reelText.classList.add('disintegrate');
+                }
+                setTimeout(() => {
+                    reelText.style.display = 'none';
+                    reelBar.style.display = 'none';
+                    // Force narration reveal
+                    narrationContainer.style.display = 'block';
+                    narrationContainer.style.opacity = '1';
+                    narrationContainer.style.transform = 'scale(1)';
+                    narrationContainer.classList.add('visible');
+                    charlotteNarration.style.opacity = '1';
+                    charlotteNarration.classList.add('typewriter');
+                    console.log('Fallback: Greeting typing – Charlotte speaks!'); // Debug start
+                    setTimeout(() => {
+                        console.log('Fallback: Narration batch 1: Greeting done.'); // Debug progress
+                    }, 2000); // After greeting header
+                    setTimeout(() => {
+                        console.log('Fallback: Narration complete – Full tale spun!'); // Debug
+                        dynamicWindow.style.opacity = '1';
+                        dynamicWindow.style.transform = 'scale(1)';
+                        dynamicWindow.classList.add('visible');
+                    }, 8000); // 8s total pace
+                }, 1000); // 1s for disintegrate
+                console.log('Fallback Spider – Sequence fully spun with dialogue!'); // Debug
+            }, 10000); // 10s total fallback
+
+            // Button Click: Follow Thread to Main Page
+            function followThread() {
+                console.log('Thread followed – To the Cafe!'); // Debug
+                localStorage.setItem('spiderTicket', 'cafe-access'); // Pass to main.html for continuity (e.g., VIP teases)
+                window.location.href = 'main.html'; // Redirect to dynamic nav page
+            }
+
+            // Expose followThread globally (for onclick)
+            window.followThread = followThread;
+        });
+
+        console.log('Spider Web Loading Online – Spun with whimsy... Lights, camera, quest!'); // Final Debug
+    </script>
+</body>
+</html>
+
