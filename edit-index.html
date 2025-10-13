@@ -1,340 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eternal Estates: Spider's Brew Loading – Web of Quest</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Mono:wght@300;400;500&display=swap');
-        body { 
-            background: #000000 !important; /* Black theater void – arachnid immersion */
-            color: #FFFFFF !important; /* White text for stark contrast */
-            font-family: 'Roboto Mono', monospace; /* Script-like body */
-            margin: 0; 
-            padding: 0; 
-            text-align: center; 
-            position: relative;
-            overflow-x: hidden;
-            min-height: 100vh;
-            /* Subtle film grain (ethereal texture – faint, static) */
-            background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.01) 0%, transparent 50%), 
-                              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.01) 0%, transparent 50%);
-            background-size: 100px 100px;
-        }
-        /* Header Image Placeholder (Fixed Top Banner – 200px Height, Full-Width Responsive) */
-        .header-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 200px;
-            background: #000000; /* Black base for void blend */
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIyMDAiIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDAwMDAwIi8+PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48cGF0aCBkPSJNNTAgMTUwIEw1MDAgNTAgTDc1MCAxNTAgWiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ5NUVEIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1kYXNoYXJyYXk9IjUsNSIvPjxyZWN0IHg9IjQwMCIgeT0iMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDk1RUQiIHN0cm9rZS13aWR0aD0iMiIvPjxyZWN0IHg9IjYwMCIgeT0iODAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ5NUVEIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSI0MDAiIGN5PSIxMDAiIHI9IjQwIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDk1RUQiIHN0cm9rZS13aWR0aD0iMSIvPjx0ZXh0IHg9IjkwJSIgeT0iOTAlIiBmb250LWZhbWlseT0iJ1BsYXlmYWlyIERpc3BsYXknLCBzZXJpZiIgZm9udC1zaXplPSIxMnB4IiBmaWxsPSJyZ2JhKDE5OSwgMTk5LCAxOTksIDAuMykiIHRleHQtYW5jaG9yPSJlbmQiPlBsYWNlaG9sZGVyOiBGb2dneSBFc3RhdGU8L3RleHQ+PC9zdmc+PC9kZWZzPjwvc3ZnPg=='); /* Base64 SVG: Bolder gothic estate silhouette (spires, arched windows, web accents) + faint placeholder text */
-            background-size: cover;
-            background-position: center;
-            z-index: 10; /* Above body, below intro */
-            opacity: 0.8; /* Subtle veil */
-            animation: subtleSlide 20s ease-in-out infinite; /* Ethereal drift for film feel */
-            filter: blur(1px); /* Misty fog effect */
-        }
-        @keyframes subtleSlide {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(-5px); } /* Gentle "film reel" sway */
-        }
-        @media (max-width: 768px) {
-            .header-image { height: 150px; } /* Compact mobile banner */
-        }
-        .loading-container { 
-            max-width: 100vw; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            opacity: 1; 
-            transition: opacity 1s ease-out; 
-            padding-top: 200px; /* Offset for fixed header */
-        }
-        .loading-container.hidden { opacity: 0; } /* Fade out after narration */
-        .spider-intro { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            background: #000000; /* Black screen for intro */
-            z-index: 20; /* Above all */
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            opacity: 1; 
-            transition: opacity 1s ease-out; /* Fade out to narration */
-        }
-        .spider-intro.hidden { opacity: 0; pointer-events: none; } /* JS hides after 6s */
-        .web-target { 
-            width: 300px; 
-            height: 300px; 
-            border: 5px solid #FFFFFF; /* White web circle – sniper rifle target vibe */
-            border-radius: 50%; 
-            position: relative; 
-            background: #000000; /* Black interior */
-            /* Web pattern (radial lines like spider silk – cornflower tint) */
-            background-image: 
-                conic-gradient(from 0deg at 50% 50%, transparent 0deg, #6495ED 1deg, transparent 2deg),
-                conic-gradient(from 90deg at 50% 50%, transparent 0deg, #6495ED 1deg, transparent 2deg),
-                conic-gradient(from 180deg at 50% 50%, transparent 0deg, #6495ED 1deg, transparent 2deg),
-                conic-gradient(from 270deg at 50% 50%, transparent 0deg, #6495ED 1deg, transparent 2deg);
-            background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; /* Layered for crosshair web */
-            animation: targetShake 0.3s ease-out 2s forwards; /* Dramatic shake on web bloom */
-        }
-        @keyframes targetShake { 
-            0%, 100% { transform: translateX(0) translateY(0); } 
-            25% { transform: translateX(-5px) translateY(-2px); } 
-            50% { transform: translateX(5px) translateY(2px); } /* Mild thump vibration – whimsical "land" */
-            75% { transform: translateX(-3px) translateY(-1px); } 
-            100% { transform: translateX(0) translateY(0); } /* Settle */
-        }
-        .spider-drop { 
-            position: absolute; 
-            top: -50px; /* Start above circle */
-            left: 50%; 
-            transform: translateX(-50%); 
-            font-size: 4em; /* Large spider emoji */
-            opacity: 0; 
-            animation: dropSilk 2s ease-in forwards; /* 2s gentle drop on silk */
-        }
-        @keyframes dropSilk { 
-            0% { top: -50px; opacity: 0; transform: translateX(-50%) rotate(0deg); } /* Start hidden above */
-            50% { top: 50%; opacity: 1; transform: translateX(-50%) rotate(-10deg); } /* Mid-drop rotate for whimsy */
-            100% { top: 70%; opacity: 1; transform: translateX(-50%) rotate(0deg); } /* Land center-bottom with thump */
-        }
-        .tea-cup { 
-            position: absolute; 
-            top: 50%; 
-            left: 60%; /* "Held" in spider's foreleg */
-            font-size: 2em; /* Tea cup emoji */
-            opacity: 0; 
-            animation: teaSteam 2s ease-in forwards 0.5s; /* Steam in mid-drop */
-            transform: translate(-50%, -50%); 
-        }
-        @keyframes teaSteam { 
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } 
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } /* Gentle "pour" */
-        }
-        .web-bloom { 
-            position: absolute; 
-            top: 50%; 
-            left: 50%; 
-            width: 150px; 
-            height: 150px; 
-            background: radial-gradient(circle, rgba(100, 149, 237, 0.6) 0%, transparent 70%); /* Cornflower web "splat" – blooming threads */
-            border-radius: 50%; 
-            opacity: 0; 
-            animation: webBloom 1s ease-out 2s forwards; /* Bloom after drop */
-            transform: scale(0); 
-            /* Web lines (additional threads) */
-            background-image: 
-                linear-gradient(45deg, transparent 49%, #6495ED 50%, transparent 51%),
-                linear-gradient(-45deg, transparent 49%, #6495ED 50%, transparent 51%);
-            background-size: 20px 20px; /* Dotted web pattern */
-        }
-        @keyframes webBloom { 
-            0% { opacity: 0; transform: scale(0); } 
-            50% { opacity: 0.8; transform: scale(1.2); } /* Dramatic expand */
-            100% { opacity: 0; transform: scale(1.5); } /* Fade out */
-        }
-        .spider-logo { 
-            position: absolute; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            font-family: 'Cinzel', serif; /* Romantic goth for elegance */
-            font-size: 3em; 
-            font-weight: 700; 
-            color: #FFFFFF; 
-            background: linear-gradient(to right, #FFFFFF 0%, #6495ED 50%, #FFFFFF 100%); /* White to cornflower tint */
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            background-clip: text; 
-            letter-spacing: 5px; 
-            opacity: 0; 
-            animation: logoSwirl 2s ease-in-out 2.5s forwards; /* Swirl in after bloom */
-        }
-        @keyframes logoSwirl { 
-            0% { opacity: 0; transform: translate(-50%, -50%) rotate(-180deg) scale(0.5); text-shadow: 0 0 5px rgba(100, 149, 237, 0.3); } /* Swirl from spin/small */
-            50% { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1.2); text-shadow: 0 0 20px rgba(100, 149, 237, 1); } /* Dramatic scale/glow burst */
-            100% { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); text-shadow: 0 0 10px rgba(100, 149, 237, 0.5); } /* Settle to elegant */
-        }
-        .intertitle { 
-            position: absolute; 
-            top: 60%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            font-family: 'Cinzel', serif; 
-            font-size: 2em; 
-            font-weight: 600; 
-            color: #FFFFFF; 
-            background: linear-gradient(to right, #FFFFFF 0%, #6495ED 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            background-clip: text; 
-            letter-spacing: 3px; 
-            opacity: 0; 
-            animation: intertitleFade 1s ease-in 4.5s forwards; /* Dramatic producer seal post-logo */
-        }
-        @keyframes intertitleFade { 
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } 
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } /* Gentle expand/fade in */
-        }
-        .reel-bar { 
-            width: 60%; 
-            height: 20px; 
-            background: #111111; /* Dark reel bg */
-            border-radius: 10px; 
-            margin: 20px auto; 
-            overflow: hidden; 
-            border: 1px solid #333333; /* Subtle frame */
-            position: relative; 
-            z-index: 10; /* Below narration */
-            opacity: 0; 
-            transition: opacity 0.5s ease-in 6s; /* Reveal after intro */
-        }
-        .reel-bar.visible { opacity: 1; }
-        .reel-fill { 
-            height: 100%; 
-            background: linear-gradient(to right, #FFFFFF 0%, #6495ED 100%); /* White to cornflower progression – film strip tint */
-            width: 0%; 
-            transition: width 3s ease-in-out; /* 3s reel roll */
-            border-radius: 10px; 
-            box-shadow: 0 0 5px rgba(100, 149, 237, 0.3); /* Cornflower glow */
-        }
-        .reel-text { 
-            font-family: 'Roboto Mono', monospace; 
-            font-size: 1em; 
-            color: #FFFFFF; 
-            margin: 10px 0; 
-            opacity: 0; 
-            transition: opacity 0.5s ease-in; /* Reveal mid-reel */
-            z-index: 10; 
-        }
-        .reel-text.visible { opacity: 1; }
-        .reel-text.disintegrate { 
-            animation: disintegrate 1s ease-out forwards; /* 1s silk shatter on 100% */
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chez Spiders Lore</title>
+
+<!-- Google Fonts for Edwardian Style -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+<!-- Additional Styles -->
+<style>
+  /* Reset & Base Styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Great Vibes', cursive;
+    position: relative;
+    min-height: 100vh;
+    background: radial-gradient(circle at center, #4a6fa5, #1b2b3a, #000);
+    overflow-x: hidden;
+    color: #eee;
+  }
+
+  /* Bubbles Canvas */
+  #bubbles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  /* Title Styles */
+  h1 {
+    position: relative;
+    text-align: center;
+    font-size: 3em;
+    margin-top: 40px;
+    background: linear-gradient(45deg, #7fa9e0, #a9b0b9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    z-index: 1;
+  }
+
+  /* Web Illustration */
+  #web-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+  }
+
+  /* Web SVG */
+  #web {
+    width: 300px;
+    height: 300px;
+  }
+
+  /* Gallery Styles */
+  #gallery {
+    margin: 40px auto;
+    width: 90%;
+    max-width: 1000px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .slide-track {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+
+  .slide {
+    min-width: 200px;
+    margin: 0 10px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+  }
+
+  .slide:hover {
+    transform: scale(1.05);
+  }
+
+  .slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Comment Section */
+  #comments-section {
+    margin: 50px auto;
+    width: 90%;
+    max-width: 800px;
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+
+  #comments-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #eee;
+  }
+
+  #comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #comment-form textarea {
+    resize: vertical;
+    min-height: 60px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Great Vibes', cursive;
+    font-size: 1em;
+  }
+
+  #comment-form button {
+    align-self: flex-end;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #7fa9e0, #a9b0b9);
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Great Vibes', cursive;
+    font-size: 1em;
+    transition: background 0.3s;
+  }
+
+  #comment-form button:hover {
+    background: linear-gradient(135deg, #5a8edb, #8ba0c2);
+  }
+
+  #comments {
+    margin-top: 20px;
+  }
+
+  .comment {
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  /* Responsive */
+  @media(max-width: 768px){
+    h1 {
+      font-size: 2em;
+    }
+    #web {
+      width: 200px;
+      height: 200px;
+    }
+    .slide {
+      min-width: 150px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Bubbles Canvas -->
+<canvas id="bubbles-canvas"></canvas>
+
+<!-- Site Title -->
+<h1>Chez Spiders Lore</h1>
+
+<!-- Web Illustration -->
+<div id="web-container">
+  <!-- SVG Web Illustration -->
+  <svg id="web" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+    <!-- Central Web Web and Strands -->
+    <circle cx="150" cy="150" r="10" fill="#ccc" />
+    <!-- Radial Lines -->
+    <line x1="150" y1="150" x2="150" y2="50" stroke="#888" stroke-width="1" />
+    <line x1="150" y1="150" x2="250" y2="150" stroke="#888" stroke-width="1" />
+    <line x1="150" y1="150" x2="150" y2="250" stroke="#888" stroke-width="1" />
+    <line x1="150" y1="150" x2="50" y2="150" stroke="#888" stroke-width="1" />
+    <line x1="150" y1="150" x2="200" y2="100" stroke="#888" stroke-width="1" />
+    <line x1="150" y1="150" x2="100" y2="200" stroke="#888" stroke-width="1" />
+    <line x1="150" y1="150" x2="200" y2="200" stroke="#888" stroke-width="1" />
+    <line x1="150" y1="150" x2="100" y2="100" stroke="#888" stroke-width="1" />
+
+    <!-- Web Circles for Web Layers -->
+    <circle cx="150" cy="150" r="50" stroke="#666" stroke-width="0.5" fill="none" />
+    <circle cx="150" cy="150" r="100" stroke="#666" stroke-width="0.5" fill="none" />
+    <circle cx="150" cy="150" r="150" stroke="#666" stroke-width="0.5" fill="none" />
+  </svg>
+</div>
+
+<!-- Gallery Slider -->
+<div id="gallery">
+  <div class="slide-track" id="slide-track">
+    <div class="slide"><img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixlib=rb-4.0.4&auto=format&fit=crop&w=600&q=60" alt="Fashion 1"></div>
+    <div class="slide"><img src="https://images.unsplash.com/photo-1612832026528-4a3b411d2f6f?ixlib=rb-4.0.4&auto=format&fit=crop&w=600&q=60" alt="Fashion 2"></div>
+    <div class="slide"><img src="https://images.unsplash.com/photo-1612832026528-4a3b411d2f6f?ixlib=rb-4.0.4&auto=format&fit=crop&w=600&q=60" alt="Fashion 3"></div>
+    <div class="slide"><img src="https://images.unsplash.com/photo-1612832026528-4a3b411d2f6f?ixlib=rb-4.0.4&auto=format&fit=crop&w=600&q=60" alt="Fashion 4"></div>
+    <div class="slide"><img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixlib=rb-4.0.4&auto=format&fit=crop&w=600&q=60" alt="Fashion 5"></div>
+    <!-- Add more images as needed -->
+  </div>
+</div>
+
+<!-- Comment Section -->
+<div id="comments-section">
+  <h2>Chez Spiders Lore - Comments</h2>
+  <form id="comment-form">
+    <textarea id="comment-input" placeholder="Share your thoughts..."></textarea>
+    <button type="submit">Post Comment</button>
+  </form>
+  <div id="comments"></div>
+</div>
+
+<!-- Scripts -->
+  <script>
+      console.log('=== Spider Web Loading Starting ==='); // Debug
+
+      // Ensure DOM Ready (Bulletproof Spider Intro + Reel + Narration)
+      document.addEventListener('DOMContentLoaded', () => {
+          console.log('DOM ready – Web armed.'); // Debug
+
+          const spiderIntro = document.getElementById('spiderIntro');
+          const loadingContainer = document.getElementById('loadingContainer');
+          const spiderAnchor = document.getElementById('spiderAnchor');
+          const reelBar = document.getElementById('reelBar');
+          const reelFill = document.getElementById('reelFill');
+          const reelText = document.getElementById('reelText');
+          const narrationContainer = document.getElementById('narrationContainer');
+          const charlotteNarration = document.getElementById('charlotteNarration');
+          const dynamicWindow = document.getElementById('dynamicWindow');
+
+          let reelProgress = 0;
+          const reelTexts = [
+              'Web briefing... 0%',
+              'Shadows gathering... 33%',
+              'Characters awakening... 66%',
+              'Premiere imminent... 100%'
+          ];
+
+          // JS Typewriter Function (Full Char-by-Char for No Cutoff)
+          function typeNarration() {
+              const fullText = charlotteNarration.innerHTML; // Get full content (greeting + tale)
+              charlotteNarration.innerHTML = ''; // Clear for typing
+              let i = 0;
+              const cursor = document.createElement('span');
+              cursor.innerHTML = '|';
+              cursor.style.borderRight = '2px solid #6495ED';
+              cursor.style.animation = 'blink-caret 0.75s step-end infinite'; // Reuse CSS blink
+              charlotteNarration.appendChild(cursor);
+
+              function typeChar() {
+                  if (i < fullText.length) {
+                      charlotteNarration.innerHTML = fullText.substring(0, i + 1) + cursor.outerHTML;
+                      i++;
+                      // Progress log every 100 chars (e.g., "Typing 'cuppa' – Charlotte continues!")
+                      if (i % 100 === 0) {
+                          console.log(`Typing progress: ${i} chars – Charlotte continues!`); // Debug
+                      }
+                      setTimeout(typeChar, 100); // 100ms per char (~7.5s total for 750 chars)
+                  } else {
+                      charlotteNarration.innerHTML = fullText; // Final full text
+                      cursor.remove(); // End cursor
+                      console.log('Narration complete – Full tale spun!'); // Debug
+                      // Reveal window after typing
+                      setTimeout(() => {
+                          dynamicWindow.style.opacity = '1';
+                          dynamicWindow.style.transform = 'scale(1)';
+                          dynamicWindow.classList.add('visible');
+                      }, 500); // 0.5s pause for read
+                  }
               }
-        @keyframes disintegrate { 
-            0% { opacity: 1; filter: blur(0px); transform: scale(1); text-shadow: 0 0 10px rgba(100, 149, 237, 0.5); letter-spacing: 0; } /* Solid start */
-            50% { opacity: 0.7; filter: blur(2px); transform: scale(1.1); text-shadow: 0 0 20px rgba(100, 149, 237, 0.8); letter-spacing: 2px; } /* Glow burst + blur/spread */
-            100% { opacity: 0; filter: blur(5px); transform: scale(0.8); text-shadow: 0 0 0 rgba(100, 149, 237, 0); letter-spacing: 5px; } /* Crumble fade */
-        }
-        .narration-container { 
-            max-width: 800px; 
-            margin: 40px auto; 
-            padding: 30px; 
-            background: #111111; /* Dark narration bg – the "rectangle" for dialogue */
-            border: 1px solid #333333; /* Subtle frame */
-            border-radius: 10px; 
-            text-align: left; 
-            opacity: 0; 
-            transition: opacity 1s ease-in, transform 1s ease-in; /* Reveal after reel shatter */
-            z-index: 5; 
-            transform: scale(0.95); /* Subtle "unfold" */
-            display: none; /* Hidden until JS forces reveal */
-        }
-        .narration-container.visible { 
-            opacity: 1; 
-            transform: scale(1); 
-            display: block; /* Force show */
-        }
-        .charlotte-narration { 
-            font-family: 'Playfair Display', serif; 
-            font-size: 1.1em; 
-            line-height: 1.6; 
-            color: #CCCCCC; /* Light grey for heartfelt read */
-            margin: 0; 
-            opacity: 0; 
-            overflow: hidden; 
-            border-right: 2px solid #6495ED; /* Cornflower cursor */
-            white-space: nowrap; 
-            animation: none; /* JS triggers typewriter */
-            letter-spacing: 1px; 
-            font-weight: 400; /* Lighter for fluid type */
-            text-shadow: 0 0 2px rgba(100, 149, 237, 0.2); /* Subtle cornflower glow on text for "moving" pop */
-        }
-        .charlotte-narration.typewriter { 
-            animation: charlotteType 8s steps(120, end) forwards, blink-caret 0.75s step-end infinite; /* 8s faster pace for snappier motion */
-        }
-        @keyframes charlotteType { 
-            from { width: 0; } 
-            to { width: 100%; } 
-        }
-        @keyframes blink-caret { 
-            from, to { border-color: transparent; } 
-            50% { border-color: #6495ED; } 
-        }
-        .spider-anchor { 
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            font-size: 3em; 
-            opacity: 0; 
-            transition: opacity 1s ease-in 7s, transform 1s ease-in 7s; /* Anchor after intro */
-            z-index: 15; 
-            transform: translateX(100%); /* Slide from right */
-        }
-        .spider-anchor.visible { 
-            opacity: 1; 
-            transform: translateX(0); /* Perch on wall */
-        }
-        .dynamic-window { 
-            max-width: 600px; 
-            margin: 40px auto; 
-            padding: 30px; 
-            background: linear-gradient(to bottom, #111111, #222222); /* Dark window bg */
-            border: 2px solid #6495ED; /* Cornflower frame */
-            border-radius: 15px; 
-            text-align: center; 
-            opacity: 0; 
-            transition: opacity 1s ease-in, transform 1s ease-in; /* Reveal after narration */
-            z-index: 5; 
-            box-shadow: 0 0 20px rgba(100, 149, 237, 0.3); /* Cornflower glow like silk thread */
-            transform: scale(0.8); /* Subtle "emerge" */
-        }
-        .dynamic-window.visible { 
-                            setTimeout(() => {
-                    reelText.style.display = 'none';
-                    reelBar.style.display = 'none';
-                    // Force crawl reveal
-                    narrationContainer.style.display = 'block';
-                    narrationContainer.style.opacity = '1';
-                    narrationContainer.style.transform = 'scale(1)';
-                    narrationContainer.classList.add('visible', 'star-wars-crawl');
-                    charlotteNarration.style.opacity = '1';
-                    charlotteNarration.classList.add('star-wars-text', 'visible');
-                    console.log('Fallback: Crawl starting – Charlotte's tale scrolls!'); // Debug
-                    setTimeout(() => {
-                        console.log('Fallback: Crawl complete!'); // Debug
-                        dynamicWindow.style.opacity = '1';
-                        dynamicWindow.style.transform = 'scale(1)';
-                        dynamicWindow.classList.add('visible');
-                    }, 10000); // 10s for full crawl in fallback
-                }, 1000); // 1s for disintegrate
-                console.log('Fallback Spider – Sequence fully spun with crawl!'); // Debug end of fallback
-            }, 10000); // Outer fallback delay: 10s total (not 100000!)
+              typeChar();
+          }
 
-            // Button Click: Follow Thread to Main Page
-            function followThread() {
-                console.log('Thread followed – To the Cafe!'); // Debug
-                localStorage.setItem('spiderTicket', 'cafe-access'); // Pass to main.html for continuity
-                window.location.href = 'main.html'; // Redirect to dynamic nav page
-            }
+          // Spider Intro Sequence (6s Dramatic Total)
+          setTimeout(() => {
+              console.log('Spider web armed – Drop!'); // Debug
+          }, 100);
 
-            // Expose followThread globally (for onclick)
-            window.followThread = followThread;
-        }); // Closes DOMContentLoaded
+          // Hide Intro & Reveal Reel (After 6s)
+          setTimeout(() => {
+              spiderIntro.classList.add('hidden');
+              spiderAnchor.classList.add('visible'); // Perch spider on wall
+              console.log('Spider intro complete – Reel briefing.'); // Debug
+              setTimeout(() => {
+                  reelBar.classList.add('visible');
+                  reelText.classList.add('visible');
+                  console.log('Reel threaded.'); // Debug
+              }, 500);
+          }, 6000);
 
-        console.log('Spider Web Loading Online – Spun with whimsy... Lights, camera, quest!'); // Final Debug – Script ends here
-    </script>
+          // Reel Progression (3s – With Disintegrate at 100%)
+          setTimeout(() => {
+              const interval = setInterval(() => {
+                  console.log('Reel step:', reelProgress + 1); // Debug
+                  reelProgress += 33;
+                  reelFill.style.width = reelProgress + '%';
+                  reelText.textContent = reelTexts[Math.floor(reelProgress / 33)] || 'Premiere... 100%';
+                  if (reelProgress >= 100) {
+                      clearInterval(interval);
+                      console.log('Reel complete – Disintegrate 100%!'); // Debug
+                      reelText.classList.add('disintegrate'); // Trigger shatter
+                      setTimeout(() => {
+                          reelText.style.display = 'none';
+                          reelBar.style.display = 'none'; // Hide reel post-shatter
+                          console.log('Reel shattered – Narration spins immediately!'); // Debug
+                          // Bulletproof reveal: Force styles + class
+                          narrationContainer.style.display = 'block';
+                          narrationContainer.style.opacity = '1';
+                          narrationContainer.style.transform = 'scale(1)';
+                          narrationContainer.classList.add('visible');
+                          charlotteNarration.style.opacity = '1';
+                          // Start JS typewriter (no CSS class needed)
+                          typeNarration(); // Calls the full char-by-char function
+                          console.log('Greeting typing – Charlotte speaks!'); // Debug start
+                      }, 1000); // 1s for disintegrate
+                  }
+              }, 1000); // 1s steps for 3s
+          }, 6500); // Start after intro fade
+
+          // Fallback: Force Sequence After 10s (Bulletproof, with Immediate Narration)
+          setTimeout(() => {
+              if (spiderIntro && !spiderIntro.classList.contains('hidden')) {
+                  spiderIntro.classList.add('hidden');
+                  spiderAnchor.classList.add('visible');
+                  reelBar.classList.add('visible');
+                  reelText.classList.add('visible');
+                  reelFill.style.width = '100%';
+                  reelText.textContent = 'Premiere... 100%';
+                  reelText.classList.add('disintegrate');
+              }
+              setTimeout(() => {
+                  reelText.style.display = 'none';
+                  reelBar.style.display = 'none';
+                  // Force narration reveal
+                  narrationContainer.style.display = 'block';
+                  narrationContainer.style.opacity = '1';
+                  narrationContainer.style.transform = 'scale(1)';
+                  narrationContainer.classList.add('visible');
+                  charlotteNarration.style.opacity = '1';
+                  typeNarration(); // JS typewriter in fallback
+                  console.log('Fallback: Greeting typing – Charlotte speaks!'); // Debug
+              }, 1000);
+              console.log('Fallback Spider – Sequence fully spun with dialogue!'); // Debug
+          }, 10000);
+
+          // Button Click: Follow Thread to Main Page
+          function followThread() {
+              console.log('Thread followed – To the Cafe!'); // Debug
+              localStorage.setItem('spiderTicket', 'cafe-access'); // Pass to main.html for continuity
+              window.location.href = 'main.html'; // Redirect to dynamic nav page
+          }
+
+          // Expose followThread globally (for onclick)
+          window.followThread = followThread;
+      });
+
+      console.log('Spider Web Loading Online – Spun with whimsy... Lights, camera, quest!'); // Final Debug
+  </script>
+  
+
 </body>
 </html>
-            
