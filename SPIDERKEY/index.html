@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimera Comfort Cafe: Eternal Estates – Web of Kin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Meeting Place Theme: Softer gothic cafe vibes with web patterns and subtle glows */
+        body { 
+            background: #000000;
+            background-image: radial-gradient(circle at 50% 50%, rgba(100, 149, 237, 0.05) 0%, transparent 70%), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><path d="M0,100 Q50,50 100,100 T200,100" stroke="#333" fill="none"/></svg>');
+            background-size: 200px 200px;
+            color: #FFFFFF;
+            font-family: 'Lora', serif;
+            margin: 0; padding: 0; text-align: center; position: relative; overflow-x: hidden; min-height: 100vh;
+        }
+        .container { max-width: 100vw; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 100px 20px; }
+        .header-banner { position: fixed; top: 0; left: 0; width: 100%; height: 150px; background: linear-gradient(to bottom, #000000, rgba(75, 0, 130, 0.2)); display: flex; align-items: center; justify-content: center; z-index: 20; }
+        .slimline { position: fixed; top: 150px; width: 100%; height: 40px; background: rgba(0, 0, 0, 0.8); color: #6495ED; font-size: 1em; overflow: hidden; white-space: nowrap; animation: scrollText 15s linear infinite; z-index: 19; font-family: 'Lora', serif; }
+        @keyframes scrollText { 0% { text-indent: 100%; } 100% { text-indent: -100%; } }
+        .spider-perch { position: fixed; top: 20px; right: 20px; font-size: 3em; cursor: pointer; z-index: 21; transition: transform 0.3s; }
+        .spider-perch.wiggle { animation: wiggle 0.5s ease-in-out; }
+        @keyframes wiggle { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } 100% { transform: rotate(0deg); } }
+        .web-spin { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; z-index: 22; }
+        .web-spin.active { display: block; animation: spinWeb 1s ease-out; }
+        @keyframes spinWeb { 0% { opacity: 0; transform: scale(0); } 100% { opacity: 1; transform: scale(1); } }
+        .drawer { position: fixed; top: 200px; right: -300px; width: 300px; height: 400px; background: #111111; border: 1px solid #333; border-radius: 10px; padding: 20px; transition: right 0.5s, opacity 0.5s; opacity: 0; z-index: 23; overflow-y: auto; font-family: 'Lora', serif; }
+        .drawer.active { right: 20px; opacity: 1; }
+        .spider-message { position: fixed; top: 60px; right: 60px; width: 200px; background: rgba(0, 0, 0, 0.8); color: #FFF; border: 1px solid #6495ED; border-radius: 10px; padding: 10px; font-size: 0.9em; text-align: center; z-index: 24; opacity: 0; transition: opacity 1s ease-in-out; font-family: 'Cinzel', serif; }
+        .spider-message.active { opacity: 1; animation: fadeOut 5s forwards; }
+        @keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
+        audio { width: 100%; margin-top: 20px; background: #111111; border: 1px solid #333; border-radius: 5px; }
+        button, .promo-link { background: #333; color: #FFF; border: 1px solid #6495ED; border-radius: 5px; padding: 10px; margin: 5px; cursor: pointer; text-decoration: none; display: inline-block; text-align: center; font-family: 'Lora', serif; }
+        button:hover, .promo-link:hover { background: #6495ED; color: #000; }
+        .bottom-nav a { font-size: 1.5em; color: #FFF; text-decoration: none; margin: 0 10px; position: relative; }
+        .bottom-nav a::after { content: attr(aria-label); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.8); color: #FFF; padding: 5px; border-radius: 5px; opacity: 0; transition: opacity 0.3s; white-space: nowrap; font-family: 'Lora', serif; }
+        .bottom-nav a:hover::after { opacity: 1; }
+        .glowing-web { animation: glow 2s ease-in-out infinite; }
+        @keyframes glow { 0% { text-shadow: 0 0 5px #6495ED; } 50% { text-shadow: 0 0 10px #6495ED; } 100% { text-shadow: 0 0 5px #6495ED; } }
+        .title { font-family: 'Cinzel', serif; font-size: 4em; font-weight: 700; color: #FFFFFF; background: linear-gradient(to right, #FFFFFF 0%, #6495ED 50%, #FFFFFF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 20px 0; letter-spacing: 3px; text-shadow: 0 0 10px rgba(100, 149, 237, 0.5); animation: pulse 2s ease-in-out infinite alternate; z-index: 11; }
+        @keyframes pulse { 0% { text-shadow: 0 0 10px rgba(100, 149, 237, 0.5); } 100% { text-shadow: 0 0 20px rgba(100, 149, 237, 0.8); } }
+        .subtitle { font-family: 'Lora', serif; font-size: 1.2em; font-style: italic; color: #FFFFFF; background: linear-gradient(to right, #FFFFFF 0%, #6495ED 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 10px 0; opacity: 1; }
+        .content-section { max-width: 600px; margin: 40px auto; padding: 30px; background: rgba(75, 0, 130, 0.1); border-radius: 10px; text-align: left; opacity: 0; transition: opacity 0.5s; display: none; font-family: 'Lora', serif; }
+        .content-section.visible { display: block; opacity: 1; }
+        .nav-menu, .bottom-nav { font-family: 'Lora', serif; }
+    </style>
+</head>
+<body>
+    <div class="container" id="cafeContainer">
+        <header class="header-banner">
+            <div class="slimline" id="trackSlimline">Current Track: Ready to play...</div>
+            <div class="spider-perch" id="spiderPerch">🕷️</div>
+            <div id="spiderMessage" class="spider-message">Salutations siblings! H-5 me—I'm the key to open and close the secrets and listen to my tracks.</div>
+        </header>
+        
+        <div class="title" id="cafeTitle">Chimera Comfort Cafe</div>
+        <div class="subtitle" id="cafeSubtitle">Gather and Explore</div>
+        
+        <div class="nav-menu" id="navMenu">
+            <a href="#" data-section="about" class="nav-link" aria-label="About the Eternal Estates lore and origins">ABOUT</a>
+            <!-- Other links as before -->
+        </div>
+        
+        <!-- Dynamic Content Sections with added glowing web links -->
+        <div id="about" class="content-section visible">
+            <h2>ABOUT: Web Lore</h2>
+            <p>Eternal Estates is a gothic romantic film exploring the veiled realms of faith and kin...</p>
+            <p id="vipTeaseAbout" class="vip-tease" style="display: none;">VIP Web Access: Charlotte's secret perch reveals exclusive cafe blueprints!</p>
+            <p>Runtime: Infinite quests. Genre: Romantic Gothic Thriller. Cast: The Eternal Kin. Share the web with those who seek the light.</p>
+            <p>For more external information, visit our detailed lore page: <a href="realms.html" class="glowing-web">🕸️</a></p>
+        </div>
+
+        <div id="characters" class="content-section">
+            <h2>CHARACTERS: The Eternal Kin Weavers</h2>
+            <ul>
+                <li><strong>STAR (Director/Lead Weaver)</strong>: Gothy veil-lifter, whispers parables of trust...</li>
+                <!-- Other list items -->
+            </ul>
+            <p id="vipTeaseCharacters" class="vip-tease" style="display: none;">VIP Web Access: Charlotte's eavesdropping notes on kin meetings—unlock bios!</p>
+            <p>Each kin orbits Yeshua's light core—unlock their threads in the realms.</p>
+            <p>For more on the characters, explore our character deep-dive: <a href="kin-deep-dive.html" class="glowing-web">🕸️</a></p>
+        </div>
+
+        <div id="themes" class="content-section">
+            <h2>THEMES: Parables of Light & Web</h2>
+            <p>The film delves into veils vs. revelation...</p>
+            <p id="vipTeaseThemes" class="vip-tease" style="display: none;">VIP Web Access: Charlotte's whimsical parables—deeper veil-lift insights!</p>
+            <p>Romantic goth undertones: Love as the key glimmering in darkness...</p>
+            <p>Dive deeper into themes on our external site: <a href="themes-explained.html" class="glowing-web">🕸️</a></p>
+        </div>
+
+        <div id="support" class="content-section">
+            <h2>SUPPORT: Weave the Web</h2>
+            <p>Join the Eternal Tribe as a backer...</p>
+            <p><a href="donate.html" style="color: #6495ED; text-decoration: underline;">Tribe Membership – Become a Weaver</a></p>
+            <p id="vipTeaseSupport" class="vip-tease" style="display: none;">VIP Web Access: Charlotte's heartfelt thanks—exclusive tribe threads await!</p>
+            <p>Learn more about supporting us externally: <a href="tribe-support.html" class="glowing-web">🕸️</a></p>
+        </div>
+
+        <div id="requests" class="content-section">
+            <h2>REQUESTS: Thread Suggestions</h2>
+            <p>Share your thread ideas...</p>
+            <form>...</form>
+            <p id="vipTeaseRequests" class="vip-tease" style="display: none;">VIP Web Access: Charlotte prioritizes your suggestions—web-exclusive responses!</p>
+            <p>Submit requests via our external form: <a href="request-form.html" class="glowing-web">🕸️</a></p>
+        </div>
+
+        <div id="contact" class="content-section">
+            <h2>CONTACT: Spin the Web</h2>
+            <p>Reach STAR Productions...</p>
+            <ul>...</ul>
+            <p id="vipTeaseContact" class="vip-tease" style="display: none;">VIP Web Access: Charlotte's direct line—whimsical replies from the perch!</p>
+            <p>Connect externally for more: <a href="contact-us.html" class="glowing-web">🕸️</a></p>
+        </div>
+
+        <div id="movie-times" class="content-section">
+            <h2>MOVIE TIMES: Quest Weavings</h2>
+            <p>Eternal Estates screens...</p>
+            <ul>...</ul>
+            <p id="vipTeaseMovieTimes" class="vip-tease" style="display: none;">VIP Web Access: Charlotte's schedule notes—exclusive weaving times!</p>
+            <p>Check full schedules online: <a href="movie-schedule.html" class="glowing-web">🕸️</a></p>
+        </div>
+
+        <div id="soundtrack" class="content-section">
+            <h2>MUSIC SOUNDTRACK: Ethereal Threads</h2>
+            <p>The Eternal Estates soundtrack...</p>
+            <ul>...</ul>
+            <p id="vipTeaseSoundtrack" class="vip-tease" style="display: none;">VIP Web Access: Charlotte's remixes—spider-silk soundscapes!</p>
+            <p>Stream full soundtracks here: <a href="full-soundtrack.html" class="glowing-web">🕸️</a></p>
+        </div>
+        
+        <div class="web-spin" id="webSpin"></div>
+    </div>
+    
+    <div class="bottom-nav" id="bottomNavMenu">
+        <a href="#about" data-section="about" class="nav-link" aria-label="About the Eternal Estates lore and origins: Discover the hidden history of the web"><span>ℹ️</span></a>
+        <a href="#characters" data-section="characters" class="nav-link" aria-label="Characters of the Eternal Kin: Meet the mysterious weavers of fate"><span>👥</span></a>
+        <a href="#themes" data-section="themes" class="nav-link" aria-label="Themes of light and web: Unravel parables of redemption and shadow"><span>💡</span></a>
+        <a href="#support" data-section="support" class="nav-link" aria-label="Support the project: Join the tribe and weave your own thread"><span>❤️</span></a>
+        <a href="#requests" data-section="requests" class="nav-link" aria-label="Requests and suggestions: Share your ideas for new quests and stories"><span>📝</span></a>
+        <a href="#contact" data-section="contact" class="nav-link" aria-label="Contact STAR Productions: Spin the web for collaborations and queries"><span>✉️</span></a>
+        <a href="#movie-times" data-section="movie-times" class="nav-link" aria-label="Movie times and screenings: Embark on infinite cinematic quests"><span>🎥</span></a>
+        <a href="#soundtrack" data-section="soundtrack" class="nav-link" aria-label="Soundtrack and music: Immerse in ethereal rhythms and echoes"><span>🎶</span></a>
+        <a href="membership.html" class="promo-link" aria-label="Become a member for full access: Unlock exclusive realms and secrets"><span>🔑</span></a>
+    </div>
+    
+    <footer id="cafeFooter">
+        <p>STAR Productions: Share the web. <a href="membership.html" class="promo-link" aria-label="Unlock Full Songs with Membership: Gain access to hidden audio treasures">🔑 Unlock Full Songs</a></p>
+    </footer>
+
+    <script>
+        console.log('=== Chimera Comfort Cafe Loaded ===');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Cafe DOM ready – Threads active.');
+
+            const spiderPerch
