@@ -131,9 +131,120 @@
         <div class="web-spin" id="webSpin"></div>
     </div>
     
-    <div class="bottom-nav" id="bottomNavMenu">
+      <div class="bottom-nav" id="bottomNavMenu">
         <a href="#about" data-section="about" class="nav-link" aria-label="About the Eternal Estates lore and origins: Discover the hidden history of the web"><span>ℹ️</span></a>
         <a href="#characters" data-section="characters" class="nav-link" aria-label="Characters of the Eternal Kin: Meet the mysterious weavers of fate"><span>👥</span></a>
         <a href="#themes" data-section="themes" class="nav-link" aria-label="Themes of light and web: Unravel parables of redemption and shadow"><span>💡</span></a>
         <a href="#support" data-section="support" class="nav-link" aria-label="Support the project: Join the tribe and weave your own thread"><span>❤️</span></a>
-        <a href="#requests" data-section="requests" class="nav-link
+        <a href="#requests" data-section="requests" class="nav-link" aria-label="Requests and suggestions: Share your ideas for new quests and stories"><span>📝</span></a>
+        <a href="#contact" data-section="contact" class="nav-link" aria-label="Contact STAR Productions: Spin the web for collaborations and queries"><span>✉️</span></a>
+        <a href="#movie-times" data-section="movie-times" class="nav-link" aria-label="Movie times and screenings: Embark on infinite cinematic quests"><span>🎥</span></a>
+        <a href="#soundtrack" data-section="soundtrack" class="nav-link" aria-label="Soundtrack and music: Immerse in ethereal rhythms and echoes"><span>🎶</span></a>
+        <a href="membership.html" class="promo-link" aria-label="Become a member for full access: Unlock exclusive realms and secrets"><span>🔑</span></a>
+    </div>
+    
+    <footer id="cafeFooter">
+        <p>STAR Productions: Share the web. <a href="membership.html" class="promo-link" aria-label="Unlock Full Songs with Membership: Gain access to hidden audio treasures">🔑 Unlock Full Songs</a></p>
+    </footer>
+
+    <script>
+        console.log('=== Chimera Comfort Cafe Loaded ===');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Cafe DOM ready – Threads active.');
+
+            const spiderPerch = document.getElementById('spiderPerch');
+            const webSpin = document.getElementById('webSpin');
+            const audioDrawer = document.getElementById('audioDrawer');
+            const soundtrackPlayer = document.getElementById('soundtrackPlayer');
+            const trackSlimline = document.getElementById('trackSlimline');
+            const playButton = document.getElementById('playButton');
+            const pauseButton = document.getElementById('pauseButton');
+            const nextButton = document.getElementById('nextButton');
+            const trackListItems = document.querySelectorAll('#trackList li');
+            const spiderMessage = document.getElementById('spiderMessage');
+            const tracks = [
+                { src: 'music/3chimeras.mp3', title: '3 Chimeras' },
+                { src: 'path/to/track2.mp3', title: 'Kin Orbit' },
+                { src: 'path/to/track3.mp3', title: 'Brew Redemption' }
+            ];
+            let currentTrackIndex = 0;
+            let isPlaying = false;
+
+            spiderMessage.classList.add('active');
+
+            spiderPerch.addEventListener('click', () => {
+                spiderPerch.classList.add('wiggle');
+                if (audioDrawer.classList.contains('active')) {
+                    audioDrawer.classList.remove('active');
+                    soundtrackPlayer.pause();
+                    isPlaying = false;
+                    trackSlimline.textContent = 'Drawer closed';
+                } else {
+                    setTimeout(() => {
+                        webSpin.classList.add('active');
+                        setTimeout(() => {
+                            audioDrawer.classList.add('active');
+                            webSpin.classList.remove('active');
+                            playNextTrack();
+                            isPlaying = true;
+                        }, 1000);
+                    }, 500);
+                }
+            });
+
+            playButton.addEventListener('click', () => {
+                if (!isPlaying) {
+                    playNextTrack();
+                    isPlaying = true;
+                }
+            });
+
+            pauseButton.addEventListener('click', () => {
+                soundtrackPlayer.pause();
+                isPlaying = false;
+                trackSlimline.textContent = 'Paused';
+            });
+
+            nextButton.addEventListener('click', () => {
+                currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+                playNextTrack();
+            });
+
+            trackListItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const src = item.getAttribute('data-src');
+                    soundtrackPlayer.src = src;
+                    soundtrackPlayer.play();
+                    trackSlimline.textContent = 'Now Playing: ' + item.textContent;
+                });
+            });
+
+            soundtrackPlayer.addEventListener('ended', () => {
+                currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+                playNextTrack();
+            });
+
+            function playNextTrack() {
+                const track = tracks[currentTrackIndex];
+                soundtrackPlayer.src = track.src;
+                soundtrackPlayer.play();
+                trackSlimline.textContent = 'Now Playing: ' + track.title;
+            }
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('data-section');
+                    const section = document.getElementById(sectionId);
+                    document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('visible'));
+                    setTimeout(() => {
+                        section.classList.add('visible');
+                        section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
