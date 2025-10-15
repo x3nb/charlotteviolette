@@ -19,14 +19,15 @@
         .header-banner { position: fixed; top: 0; left: 0; width: 100%; height: 150px; background: linear-gradient(to bottom, #000000, rgba(75, 0, 130, 0.2)); display: flex; align-items: center; justify-content: center; z-index: 20; }
         .slimline { position: fixed; top: 150px; width: 100%; height: 40px; background: rgba(0, 0, 0, 0.8); color: #6495ED; font-size: 1em; overflow: hidden; white-space: nowrap; animation: scrollText 15s linear infinite; z-index: 19; font-family: 'Lora', serif; }
         @keyframes scrollText { 0% { text-indent: 100%; } 100% { text-indent: -100%; } }
-        .spider-perch { position: fixed; top: 20px; right: 20px; font-size: 3em; cursor: pointer; z-index: 21; transition: transform 0.3s; color: #FFFFFF; }
+        .spider-perch { position: fixed; top: 20px; right: 20px; font-size: 3em; cursor: pointer; z-index: 21; transition: transform 0.3s; color: #FFFFFF; animation: spiderGlow 3s infinite; } /* Added glow animation for spider */
+        @keyframes spiderGlow { 0% { text-shadow: 0 0 5px #6495ED; } 50% { text-shadow: 0 0 10px #6495ED; } 100% { text-shadow: 0 0 5px #6495ED; } }
         .spider-perch.wiggle { animation: wiggle 0.5s ease-in-out; }
         @keyframes wiggle { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } 100% { transform: rotate(0deg); } }
         .web-spin { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; z-index: 22; }
         .web-spin.active { display: block; animation: spinWeb 1s ease-out; }
         @keyframes spinWeb { 0% { opacity: 0; transform: scale(0); } 100% { opacity: 1; transform: scale(1); } }
-        .drawer { position: fixed; top: 200px; right: -300px; width: 300px; height: 400px; background: #111111; border: 1px solid #333; border-radius: 10px; padding: 20px; transition: right 0.5s, opacity 0.5s; opacity: 0; z-index: 23; overflow-y: auto; font-family: 'Lora', serif; }
-        .drawer.active { right: 20px; opacity: 1; }
+        .drawer { position: fixed; top: 200px; right: -300px; width: 300px; height: 400px; background: #111111; border: 1px solid #333; border-radius: 10px; padding: 20px; transition: right 0.5s, opacity 0.5s; opacity: 0; z-index: 23; overflow-y: auto; font-family: 'Lora', serif; display: none; } /* Ensured hidden initially */
+        .drawer.active { right: 20px; opacity: 1; display: block; }
         .spider-message { position: fixed; top: 60px; right: 60px; width: 200px; background: rgba(0, 0, 0, 0.8); color: #FFF; border: 1px solid #6495ED; border-radius: 10px; padding: 10px; font-size: 0.9em; text-align: center; z-index: 24; opacity: 0; transition: opacity 1s ease-in-out; font-family: 'Cinzel', serif; }
         .spider-message.active { opacity: 1; animation: fadeOut 5s forwards; }
         @keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
@@ -44,8 +45,6 @@
         .content-section { max-width: 600px; margin: 40px auto; padding: 30px; background: rgba(75, 0, 130, 0.1); border-radius: 10px; text-align: left; opacity: 0; transition: opacity 0.5s; display: none; font-family: 'Lora', serif; }
         .content-section.visible { display: block; opacity: 1; }
         .nav-menu, .bottom-nav { font-family: 'Lora', serif; }
-        .hero-image { max-width: 80%; margin: 20px auto; border: 1px solid #6495ED; border-radius: 10px; opacity: 0; animation: fadeIn 1s forwards; background-image: url('path/to/hero-image.jpg'); height: 300px; background-size: cover; background-position: center; }
-        @keyframes fadeIn { to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -55,10 +54,6 @@
             <div class="spider-perch" id="spiderPerch">🕷️</div>
             <div id="spiderMessage" class="spider-message">Salutations siblings! H-5 me—I'm the key to open and close the secrets and listen to my tracks.</div>
         </header>
-        
-        <div class="hero-image">
-            <p style="color: #FFF; text-shadow: 0 0 5px #000;">Enter the Web of Kin</p>
-        </div>
         
         <div class="title" id="cafeTitle">Chimera Comfort Cafe</div>
         <div class="subtitle" id="cafeSubtitle">Gather and Explore</div>
@@ -160,7 +155,7 @@
 
             const spiderPerch = document.getElementById('spiderPerch');
             const webSpin = document.getElementById('webSpin');
-            const audioDrawer = document.getElementById('audioDrawer
+            const audioDrawer = document.getElementById('audioDrawer');
             const soundtrackPlayer = document.getElementById('soundtrackPlayer');
             const trackSlimline = document.getElementById('trackSlimline');
             const playButton = document.getElementById('playButton');
