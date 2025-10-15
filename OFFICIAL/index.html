@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimera Comfort Cafe: Eternal Estates – Web of Kin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Reuse prior CSS for consistency – black void, cornflower accents, 'Cinzel' title, etc. */
+        body { 
+            background: #000000 !important; 
+            color: #FFFFFF !important; 
+            font-family: 'Roboto Mono', monospace; 
+            margin: 0; padding: 0; text-align: center; position: relative; overflow-x: hidden; min-height: 100vh;
+            background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.01) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(255,255,255,0.01) 0%, transparent 50%);
+            background-size: 100px 100px;
+        }
+        .container { max-width: 100vw; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 200px; }
+        .header-banner { position: fixed; top: 0; left: 0; width: 100%; height: 200px; background: linear-gradient(to bottom, #000000 0%, rgba(100, 149, 237, 0.1) 100%); z-index: 10; opacity: 1; display: flex; align-items: center; justify-content: center; }
+        .header-image { width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,...'); background-size: cover; background-position: center; filter: blur(1px); animation: subtleSlide 10s linear infinite; }
+        @keyframes subtleSlide { 0% { transform: translateX(0); } 100% { transform: translateX(-20%); } }
+        .spider-perch { position: fixed; top: 20px; right: 20px; font-size: 3em; z-index: 15; opacity: 1; }
+        .title { font-family: 'Cinzel', serif; font-size: 4em; font-weight: 700; color: #FFFFFF; background: linear-gradient(to right, #FFFFFF 0%, #6495ED 50%, #FFFFFF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 20px 0; letter-spacing: 3px; text-shadow: 0 0 10px rgba(100, 149, 237, 0.5); animation: pulse 2s ease-in-out infinite alternate; z-index: 11; }
+        @keyframes pulse { 0% { text-shadow: 0 0 10px rgba(100, 149, 237, 0.5); } 100% { text-shadow: 0 0 20px rgba(100, 149, 237, 0.8); } }
+        .subtitle { font-family: 'Playfair Display', serif; font-size: 1.2em; font-style: italic; color: #FFFFFF; background: linear-gradient(to right, #FFFFFF 0%, #6495ED 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 10px 0; opacity: 1; }
+        .nav-menu { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 40px; opacity: 1; z-index: 11; pointer-events: auto; }
+        .nav-link { color: #FFFFFF; background: linear-gradient(to right, #FFFFFF 0%, #6495ED 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; font-family: 'Roboto Mono', monospace; font-size: 1.2em; font-weight: 500; margin: 10px 20px; padding: 10px 20px; border: 1px solid #333333; border-radius: 5px; transition: all 0.3s; text-shadow: 0 0 5px rgba(100, 149, 237, 0.3); letter-spacing: 1px; cursor: pointer; z-index: 11; }
+        .nav-link:hover { background: linear-gradient(to right, #6495ED 0%, #FFFFFF 100%); box-shadow: 0 0 10px rgba(100, 149, 237, 0.5); transform: scale(1.05); }
+        .nav-link.active { background: linear-gradient(to right, #6495ED 0%, #6495ED 100%); color: #000000; -webkit-text-fill-color: #000000; }
+        .content-section { max-width: 800px; margin: 40px auto; padding: 30px; background: #111111; border: 1px solid #333333; border-radius: 10px; text-align: left; opacity: 0; transition: opacity 0.5s ease-in; display: none; z-index: 11; }
+        .content-section.visible { display: block; opacity: 1; }
+        .content-section h2 { font-family: 'Cinzel', serif; font-size: 2em; color: #FFFFFF; background: linear-gradient(to right, #FFFFFF 0%, #6495ED 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; text-align: center; letter-spacing: 2px; }
+        .content-section p { line-height: 1.6; margin-bottom: 15px; color: #CCCCCC; }
+        .content-section ul { list-style-type: none; padding: 0; }
+        .content-section li { margin: 10px 0; color: #CCCCCC; cursor: pointer; transition: color 0.3s; } /* Make tracks clickable */
+        .content-section li:hover { color: #6495ED; } /* Cornflower accent on hover */
+        .vip-tease { color: #6495ED; font-style: italic; font-weight: bold; }
+        .scripture { color: #CCCCCC; font-family: 'Roboto Mono', monospace; font-style: italic; font-size: 0.9em; margin-top: 30px; padding: 10px; border: 1px solid #333333; border-radius: 5px; opacity: 1; z-index: 11; }
+        footer { color: #888888; font-size: 0.8em; margin-top: 20px; padding-top: 10px; font-family: 'Roboto Mono', monospace; opacity: 1; z-index: 11; }
+        .donate-link { color: #6495ED; text-decoration: underline; font-weight: bold; }
+        .donate-link:hover { color: #FFFFFF; }
+
+        /* Custom styling for audio player */
+        audio { width: 100%; max-width: 400px; margin: 20px auto; background: #111111; border: 1px solid #333333; border-radius: 5px; box-shadow: 0 0 10px rgba(100, 149, 237, 0.3); }
+
+        @media (max-width: 768px) { 
+            .header-banner { height: 150px; } 
+            .container { padding-top: 150px; } 
+            .title { font-size: 2.5em; } 
+            .nav-menu { flex-direction: column; align-items: center; } 
+            .nav-link { margin: 5px 0; width: 80%; } 
+            .content-section { margin: 20px; padding: 20px; } 
+            .spider-perch { font-size: 2em; top: 10px; right: 10px; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="cafeContainer">
+        <header class="header-banner" id="cafeHeader">
+            <div class="header-image"></div>
+            <div class="spider-perch" id="spiderPerch">🕷️</div>
+        </header>
+        <div class="title" id="cafeTitle">Chimera Comfort Cafe</div>
+        <div class="subtitle" id="cafeSubtitle">Select a Thread</div>
+        <div class="nav-menu" id="navMenu">
+            <a href="#" data-section="about" class="nav-link">ABOUT</a>
+            <a href="#" data-section="characters" class="nav-link">CHARACTERS</a>
+            <a href="#" data-section="themes" class="nav-link">THEMES</a>
+            <a href="#" data-section="support" class="nav-link">SUPPORT</a>
+            <a href="#" data-section="requests" class="nav-link">REQUESTS</a>
+            <a href="#" data-section="contact" class="nav-link">CONTACT</a>
+            <a href="#" data-section="movie-times" class="nav-link">MOVIE TIMES</a>
+            <a href="#" data-section="soundtrack" class="nav-link">MUSIC SOUNDTRACK</a>
+        </div>
+        
+        <!-- Existing content sections remain unchanged -->
+        <div id="about" class="content-section visible">...</div>
+        <div id="characters" class="content-section">...</div>
+        <div id="themes" class="content-section">...</div>
+        <div id="support" class="content-section">...</div>
+        <div id="requests" class="content-section">...</div>
+        <div id="contact" class="content-section">...</div>
+        <div id="movie-times" class="content-section">...</div>
+        
+        <div id="soundtrack" class="content-section">
+            <h2>MUSIC SOUNDTRACK: Ethereal Threads</h2>
+            <p>The Eternal Estates soundtrack brews gothy symphonies and light hymns...</p>
+            <ul id="soundtrackTracks">
+                <li>"Veil Glimmer": Cornflower whispers (Opening theme – ambient piano drop, 3:14)</li>
+                <li>"Kin Orbit": Teal flows (Character montage – synth strings web, 4:22)</li>
+                <li>"Brew Redemption": Purple hymns (Climax rift – choral echoes, 5:01)</li>
+                <li>"Eternal Light Reel": Yeshua core (End credits – uplifting synth thread, 2:45)</li>
+            </ul>
+            <p>Listen to the soundtrack:</p>
+            <audio controls id="soundtrackPlayer">
+                <source src="path/to/veil-glimmer.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <p id="vipTeaseSoundtrack" class="vip-tease" style="display: none;">VIP Web Access: Charlotte's remixes—spider-silk soundscapes!</p>
+            <p>Stream on soundtrack.html (Tribe exclusives: Full scores + kin voiceovers, spider silk remixes). Share a track: "Light steeps the sound, web to web."</p>
+        </div>
+        
+        <div class="scripture" id="cafeScripture">
+            <em>"In the beginning was the Word... and the light shines in the darkness." — John 1:1-5 (Cafe Note: Yeshua's eternal web.)</em>
+        </div>
+    </div>
+    <footer id="cafeFooter">
+        <p>STAR Productions: Share the web. <a href="donate.html" class="donate-link">Support the Cafe (Tribe Threads)</a>.</p>
+    </footer>
+
+    <script>
+        console.log('=== Chimera Comfort Cafe Loaded ===');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Cafe DOM ready – Threads active.');
+
+            const cafeSubtitle = document.getElementById('cafeSubtitle');
+            const sections = document.querySelectorAll('.content-section');
+            const vipTeases = document.querySelectorAll('.vip-tease');
+            const soundtrackTracks = document.querySelectorAll('#soundtrackTracks li');
+            const audioPlayer = document.getElementById('soundtrackPlayer');
+
+            // Check for Spider Ticket
+            if (localStorage.getItem('spiderTicket') === 'cafe-access') {
+                vipTeases.forEach(tease => tease.style.display = 'block');
+                console.log('VIP Web Access – Charlotte\'s teases unlocked!');
+            }
+
+            // Dynamic Section Loading
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('data-section');
+                    const section = document.getElementById(sectionId);
+                    const subtitleText = link.textContent + ': Web Chapter';
+                    sections.forEach(sec => sec.classList.remove('visible'));
+                    setTimeout(() => {
+                        section.classList.add('visible');
+                        cafeSubtitle.textContent = subtitleText;
+                        link.classList.add('active');
+                        document.querySelectorAll('.nav-link').forEach(other => {
+                            if (other !== link) other.classList.remove('active');
+                        });
+                    }, 300);
+                    section.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Handle Soundtrack Playlist
+            soundtrackTracks.forEach((track, index) => {
+                track.addEventListener('click', () => {
+                    const trackSources = [
+                        'path/to/veil-glimmer.mp3',  // Replace with actual paths
+                        'path/to/kin-orbit.mp3',
+                        'path/to/brew-redemption.mp3',
+                        'path/to/eternal-light-reel.mp3'
+                    ];
+                    audioPlayer.src = trackSources[index];
+                    audioPlayer.play();
+                    console.log('Playing track:', track.textContent);
+                });
+            });
+
+            if (localStorage.getItem('spiderTicket') !== 'cafe-access') {
+                console.log('Standard access – ABOUT threaded.');
+            }
+        });
+
+        console.log('Web Cafe Online – Threads spun... Brew on, kin!');
+    </script>
+</body>
+</html>
