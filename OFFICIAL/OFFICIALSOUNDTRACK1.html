@@ -71,9 +71,10 @@
             <button id="nextButton">Next</button> <!-- Next button -->
             <audio id="soundtrackPlayer" controls style="display: none;"></audio> <!-- Hidden initially -->
             <ul id="trackList">
-                <li data-src="music/3chimeras.mp3">3 Chimeras</li> <!-- Added for testing -->
-                <li data-src="path/to/track2.mp3">Track 2: Kin Orbit</li>
-                <li data-src="path/to/track3.mp3">Track 3: Brew Redemption</li>
+                <li data-src="https://x3nb.github.io/charlotteviolette/OFFICIAL/Prayer.mp3">Track 1 PRAYER</li> <!-- Added for testing -->
+                <li data-src="https://x3nb.github.io/charlotteviolette/OFFICIAL/Lore.mp3">Track 2: LORE</li>
+                <li data-src="https://x3nb.github.io/charlotteviolette/OFFICIAL/Yeshua.mp3">Track 3: YESHUA</li>
+                <li data-src=" https://x3nb.github.io/charlotteviolette/OFFICIAL/starswelcome.mp3 ">Track 4: STARS-GREETING</li>
             </ul>
         </div>
     </div>
@@ -105,9 +106,10 @@
             const trackListItems = document.querySelectorAll('#trackList li');
             const spiderMessage = document.getElementById('spiderMessage');  // Reference for message
             const tracks = [
-                { src: 'music/3chimeras.mp3', title: '3 Chimeras' },  // Updated for testing
-                { src: 'path/to/track2.mp3', title: 'Kin Orbit' },
-                { src: 'path/to/track3.mp3', title: 'Brew Redemption' }
+                { src: 'https://x3nb.github.io/charlotteviolette/OFFICIAL/Prayer.mp3', title: 'PRAYER' },  // Updated for testing
+                { src: 'https://x3nb.github.io/charlotteviolette/OFFICIAL/Lore.mp3', title: 'LORE' },
+                { src: 'https://x3nb.github.io/charlotteviolette/OFFICIAL/Yeshua.mp3', title: 'YESHUA' },
+                { src: 'https://x3nb.github.io/charlotteviolette/OFFICIAL/Yeshua.mp3', title: 'GREETING' },
             ];
             let currentTrackIndex = 0;
             let isPlaying = false;
