@@ -298,21 +298,22 @@
   }
 
   /* Playlist Drawer UI */
-  #playlistDrawer {
-    position: fixed;
-    top: 0;
-    right: -300px; /* Hidden off-screen */
-    width: 300px;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    color: #ddd;
-    padding: 20px;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.5);
-    transition: right 0.5s ease;
-    z-index: 15;
-    font-family: 'Lora', serif;
-    overflow-y: auto;
-  }
+ #playlistDrawer {
+  position: fixed;
+  top: 0;
+  right: -320px; /* Increased from -300px to hide it more completely (avoids any sliver from shadow or rendering) */
+  width: 300px;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  color: #ddd;
+  padding: 20px;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.5);
+  transition: right 0.5s ease;
+  z-index: 15;
+  font-family: 'Lora', serif;
+  overflow-y: auto;
+}
+  
   #playlistDrawer.open {
     right: 0; /* Slide in */
   }
